@@ -24,6 +24,7 @@ Usage
 ```
 Options
 -----------
+		
 Option|Description
 ---------------------|---------------
 **ng-model**					The angular data model
@@ -39,7 +40,7 @@ Option|Description
 **textarea-required**			True/False HTML/AngularJS required validation
 ---------------------|---------------
 **enable-bootstrap-title**		True/False whether or not to show the button hover title styled with bootstrap	
----------------------|---------------
+---------------------|---------------	
 
 Examples
 -----------
