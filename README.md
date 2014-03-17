@@ -28,7 +28,6 @@ Options
 Option|Description
 ---------------------|---------------
 **ng-model**		 | 			The angular data model
----------------------|---------------
 **textarea-id** 	 |			The id to assign to the editable div
 ---------------------|---------------
 **textarea-class**	 |			The class(es) to assign to the the editable div
