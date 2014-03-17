@@ -24,22 +24,22 @@ Usage
 ```
 Options
 -----------
-		
+
 Option|Description
 ---------------------|---------------
-**ng-model**					The angular data model
+**ng-model**		 | 			The angular data model
 ---------------------|---------------
-**textarea-id** 				The id to assign to the editable div
+**textarea-id** 	 |			The id to assign to the editable div
 ---------------------|---------------
-**textarea-class**				The class(es) to assign to the the editable div
+**textarea-class**	 |			The class(es) to assign to the the editable div
 ---------------------|---------------
-**textarea-height**				If the height is not specified in a text-area class then the hight of the editable div (default: 80px)
+**textarea-height**	 |			If the height is not specified in a text-area class then the hight of the editable div (default: 80px)
 ---------------------|---------------
-**textarea-name**				The name attribute of the editable div 
+**textarea-name**	 |			The name attribute of the editable div 
 ---------------------|---------------
-**textarea-required**			True/False HTML/AngularJS required validation
+**textarea-required**|			True/False HTML/AngularJS required validation
 ---------------------|---------------
-**enable-bootstrap-title**		True/False whether or not to show the button hover title styled with bootstrap	
+**enable-bootstrap-title**|		True/False whether or not to show the button hover title styled with bootstrap	
 ---------------------|---------------	
 
 Examples
