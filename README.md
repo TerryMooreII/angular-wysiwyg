@@ -3,7 +3,7 @@ Angular WYSIWYG directive.
 ===========================
 
 
-![Awesome Shot] ()
+![Awesome Shot] (https://raw.github.com/TerryMooreII/angular-wysiwyg/master/screenshots/screenshot.png)
 
 
 
