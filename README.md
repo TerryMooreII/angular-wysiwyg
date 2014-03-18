@@ -2,6 +2,11 @@
 Angular WYSIWYG directive.
 ===========================
 
+
+![Awesome Shot] ()
+
+
+
 Required dependancies
 -----------------------
 * [AngularJS] (http://www.angularjs.com) 
