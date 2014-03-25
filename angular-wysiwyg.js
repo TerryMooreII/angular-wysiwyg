@@ -20,11 +20,11 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
   .directive('wysiwyg', function ($timeout) {
     return {
       	template: '<div>' +				
-					'<script>' +
+					'<style>' +
 					'	.wysiwyg-btn-group-margin{  margin-right:5px; }' +
 					'	.wysiwyg-select{ height:30px;margin-bottom:1px;}' +
 					'	.wysiwyg-colorpicker{ font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
-					'</script>' +
+					'</style>' +
 	      			'<div class="btn-group btn-group-sm wysiwyg-btn-group-margin">' +
 						'<button title="Bold" tabindex="-1" type="button" unselectable="on" class="btn btn-default" ng-click="format(\'bold\')" ng-class="{ active: isBold}"><i class="fa fa-bold"></i></button>' +
 						'<button title="Italic" tabindex="-1" type="button" unselectable="on" class="btn btn-default" ng-click="format(\'italic\')" ng-class="{ active: isItalic}"><i class="fa fa-italic"></i></button>' +
