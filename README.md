@@ -2,7 +2,7 @@
 Angular WYSIWYG directive.
 ===========================
 
-[Demo page:] (http://embed.plnkr.co/yxMbI54wYUlxu2hSpfw8/preview) 
+[Demo] (http://embed.plnkr.co/yxMbI54wYUlxu2hSpfw8/preview) 
 
 ![Awesome Shot] (https://raw.github.com/TerryMooreII/angular-wysiwyg/master/screenshots/screenshot.png)
 
