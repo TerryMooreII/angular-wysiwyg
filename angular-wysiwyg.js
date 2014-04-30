@@ -64,14 +64,11 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
 						'<button title="Quote" tabindex="-1" type="button" unselectable="on" class="btn btn-default" ng-click="format(\'formatblock\', \'blockquote\')"  ng-class="{ active: isBlockquote}"><i class="fa fa-quote-right"></i></button>' +
 						'<button title="Paragragh" tabindex="-1" type="button" unselectable="on" class="btn btn-default" ng-click="format(\'insertParagraph\')"  ng-class="{ active: isParagraph}">P</button>' +
 					'</div>' +
-
-					'<div class="btn-group btn-group-sm wysiwyg-btn-group-margin" >' +
+					'<div class="btn-group btn-group-sm wysiwyg-btn-group-margin">' +
 						'<button ng-show="!isLink" tabindex="-1" title="Link" type="button" unselectable="on" class="btn btn-default" ng-click="createLink()"><i class="fa fa-link" ></i> </button>' +
 						'<button ng-show="isLink" tabindex="-1" title="Unlink" type="button" unselectable="on" class="btn btn-default" ng-click="format(\'unlink\')"><i class="fa fa-unlink"></i> </button>' +
 						'<button title="Image" tabindex="-1" type="button" unselectable="on" class="btn btn-default" ng-click="insertImage()"><i class="fa fa-picture-o"></i> </button>' +
-						
 					'</div>' +
-
 	  				'<div id="{{textareaId}}" style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="true" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
   				'</div>',
       	restrict: 'E',
@@ -279,8 +276,6 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
 			scope.setHiliteColor = function(){
 				scope.format('hiliteColor', scope.hiliteColor)
 			}
-
-
 
 			scope.format('enableobjectresizing', true);
         }
