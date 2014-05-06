@@ -278,6 +278,7 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
 			}
 
 			scope.format('enableobjectresizing', true);
+			scope.format('styleWithCSS', true);
         }
     };
 });
