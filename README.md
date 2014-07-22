@@ -11,7 +11,7 @@ Angular WYSIWYG directive.
 Required dependancies
 -----------------------
 * [AngularJS] (http://www.angularjs.com) 
-* [Font Awesome] (http://http://fortawesome.github.io/Font-Awesome/)
+* [Font Awesome] (http://fortawesome.github.io/Font-Awesome/)
 * [Twitter Bootstrap] (http://getbootstrap.com/2.3.2/)
 * [bootstrap-color-picker] (https://github.com/buberdds/angular-bootstrap-colorpicker)
 
