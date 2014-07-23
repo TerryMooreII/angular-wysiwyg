@@ -1,0 +1,12 @@
+{
+  "author": "TerryMooreII",
+  "name": "angular-wysiwyg",
+  "description": "Angular WYSIWYG",
+  "version": "1.0.0",
+  "homepage": "https://github.com/TerryMooreII/angular-wysiwyg",
+  "main": "./angular-wysiwyg.js",
+  "dependencies": {
+    "angular": ">= 1.0.0",
+    "angular-bootstrap-colorpicker": ">= 3.0.0"
+  }
+}
