@@ -7,6 +7,10 @@ Angular WYSIWYG directive.
 ![Awesome Shot] (https://raw.github.com/TerryMooreII/angular-wysiwyg/master/screenshots/screenshot.png)
 
 
+Installation
+------------
+`bower install angular-wysiwyg`
+
 
 Required dependancies
 -----------------------
