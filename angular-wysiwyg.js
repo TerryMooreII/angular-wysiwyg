@@ -2,28 +2,25 @@
 
 /*
 Usage: <wysiwyg textarea-id="question" textarea-class="form-control"  textarea-height="80px" textarea-name="textareaQuestion" textarea-required ng-model="question.question" enable-bootstrap-title="true"></wysiwyg>
-	options
-		textarea-id 			The id to assign to the editable div
-		textarea-class			The class(es) to assign to the the editable div
-		textarea-height			If not specified in a text-area class then the hight of the editable div (default: 80px)
-		textarea-name			The name attribute of the editable div 
-		textarea-required		HTML/AngularJS required validation
-		ng-model				The angular data model
-		enable-bootstrap-title	True/False whether or not to show the button hover title styled with bootstrap	
+    options
+        textarea-id             The id to assign to the editable div
+        textarea-class          The class(es) to assign to the the editable div
+        textarea-height         If not specified in a text-area class then the hight of the editable div (default: 80px)
+        textarea-name           The name attribute of the editable div 
+        textarea-required       HTML/AngularJS required validation
+        textarea-menu           Array of Arrays that contain the groups of buttons to show Defualt:Show all button groups
+        ng-model                The angular data model
+        enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap  
 
 Requires: 
-	Twitter-bootstrap, fontawesome, jquery, angularjs, bootstrap-color-picker (https://github.com/buberdds/angular-bootstrap-colorpicker)
+    Twitter-bootstrap, fontawesome, jquery, angularjs, bootstrap-color-picker (https://github.com/buberdds/angular-bootstrap-colorpicker)
 
 */
 
 angular.module('wysiwyg.module', ['colorpicker.module'])
-    .directive('wysiwyg', function($timeout, wysiswgGui) {
+    .directive('wysiwyg', function($timeout, wysiswgGui, $compile) {
         return {
-            template: function(element, attrs) {
-
-                return wysiswgGui.createMenu(attrs.textareaMenu);
-
-            },
+            template: '<div></div>',
             restrict: 'E',
             scope: {
                 value: '=ngModel',
@@ -33,6 +30,7 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                 textareaClass: '@textareaClass',
                 textareaRequired: '@textareaRequired',
                 textareaId: '@textareaId',
+                textareaMenu: '@textareaMenu'
             },
             replace: true,
             require: 'ngModel',
@@ -149,7 +147,7 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                         scope.isStrikethrough = scope.cmdState('strikethrough');
                         scope.isItalic = scope.cmdState('italic');
                         scope.isSuperscript = itemIs('SUP'); //scope.cmdState('superscript');
-                        scope.isSubscript = itemIs('SUB'); //scope.cmdState('subscript');	
+                        scope.isSubscript = itemIs('SUB'); //scope.cmdState('subscript');    
                         scope.isRightJustified = scope.cmdState('justifyright');
                         scope.isLeftJustified = scope.cmdState('justifyleft');
                         scope.isCenterJustified = scope.cmdState('justifycenter');
@@ -181,6 +179,9 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
 
                         scope.isLink = itemIs('A');
                     }, 10);
+
+
+
                 });
 
                 // model -> view
@@ -231,11 +232,12 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
 
-
+                element.html(wysiwgGui.createMenu(attrs.textareaMenu));
+                $compile(element.contents())(scope);
             }
         };
     })
-    .factory('wysiswgGui', function() {
+    .factory('wysiwgGui', function() {
 
         var defaultMenu = [
             ['bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript'],
@@ -251,9 +253,9 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
 
         var getMenuStyles = function() {
             return '<style>' +
-                '	.wysiwyg-btn-group-margin{  margin-right:5px; }' +
-                '	.wysiwyg-select{ height:30px;margin-bottom:1px;}' +
-                '	.wysiwyg-colorpicker{ font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
+                '   .wysiwyg-btn-group-margin{  margin-right:5px; }' +
+                '   .wysiwyg-select{ height:30px;margin-bottom:1px;}' +
+                '   .wysiwyg-colorpicker{ font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
                 '</style>';
         }
 
@@ -347,8 +349,8 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
         }
 
         var createMenu = function(menu) {
-
-            if (angular.isDefined(menu))
+            console.log(menu)
+            if (angular.isDefined(menu) && menu !== '')
                 menu = stringToArray(menu)
             else
                 menu = defaultMenu;
@@ -369,7 +371,13 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
         }
 
         var stringToArray = function(string) {
-            return JSON.parse(string.replace(/'/g, '"'));
+            var ret;
+            try {
+                ret = JSON.parse(string.replace(/'/g, '"'));
+            } catch (e) {
+                throw new Error('Invalid Textarea menu button delaration');
+            }
+            return ret;
         }
 
         return {
