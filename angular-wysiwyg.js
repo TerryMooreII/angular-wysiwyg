@@ -347,7 +347,7 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
         }
 
         var createMenu = function(menu) {
-            console.log(menu)
+            
             if (angular.isDefined(menu) && menu !== '')
                 menu = stringToArray(menu)
             else
