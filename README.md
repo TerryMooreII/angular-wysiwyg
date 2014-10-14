@@ -44,7 +44,7 @@ Option|Description
 **textarea-name**	 |			The name attribute of the editable div 
 **textarea-required**|			True/False HTML/AngularJS required validation
 **enable-bootstrap-title**|		True/False whether or not to show the button hover title styled with bootstrap	
-**textarea-menu**    |          Cusomize the wysiwyg buttons and button groups *See Below
+**textarea-menu**    |          Cusomize the wysiwyg buttons and button groups ***See Below** If nothing is specified then the default buttons and groups will be shows.
 
 
 Buttons
