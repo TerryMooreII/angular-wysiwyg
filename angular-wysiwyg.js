@@ -36,7 +36,6 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
             require: 'ngModel',
             link: function(scope, element, attrs, ngModelController) {
 
-
                 var textarea = element.find('div.wysiwyg-textarea');
 
                 scope.fonts = [
@@ -179,9 +178,6 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
 
                         scope.isLink = itemIs('A');
                     }, 10);
-
-
-
                 });
 
                 // model -> view
@@ -232,6 +228,7 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
 
+                //Create the menu system
                 element.html(wysiwgGui.createMenu(attrs.textareaMenu));
                 $compile(element.contents())(scope);
             }
@@ -375,7 +372,6 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
             try {
                 ret = JSON.parse(string.replace(/'/g, '"'));
             } catch (e) {
-                throw new Error('Invalid Textarea menu button delaration');
             }
             return ret;
         }
