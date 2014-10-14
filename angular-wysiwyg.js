@@ -18,7 +18,7 @@ Requires:
 */
 
 angular.module('wysiwyg.module', ['colorpicker.module'])
-    .directive('wysiwyg', function($timeout, wysiswgGui, $compile) {
+    .directive('wysiwyg', function($timeout, wysiwgGui, $compile) {
         return {
             template: '<div></div>',
             restrict: 'E',
@@ -35,7 +35,10 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
             replace: true,
             require: 'ngModel',
             link: function(scope, element, attrs, ngModelController) {
-
+                //Create the menu system
+                element.html(wysiwgGui.createMenu(attrs.textareaMenu));
+                $compile(element.contents())(scope);
+                
                 var textarea = element.find('div.wysiwyg-textarea');
 
                 scope.fonts = [
@@ -228,9 +231,7 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
 
-                //Create the menu system
-                element.html(wysiwgGui.createMenu(attrs.textareaMenu));
-                $compile(element.contents())(scope);
+                
             }
         };
     })
