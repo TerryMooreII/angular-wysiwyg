@@ -38,8 +38,8 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                 //Create the menu system
                 element.html(wysiwgGui.createMenu(attrs.textareaMenu));
                 $compile(element.contents())(scope);
-                
-                var textarea = element.find('div.wysiwyg-textarea');
+
+                var textarea = angular.element('div.wysiwyg-textarea');
 
                 scope.fonts = [
                     'Georgia',
@@ -91,20 +91,17 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                         container: 'body'
                     })
 
+                textarea.on('input keyup paste mouseup', function(event) {
+                    var html = textarea.html();
 
-                textarea.on('keyup mouseup', function() {
-                    scope.$apply(function readViewText() {
-                        var html = textarea.html();
-
-                        if (html == '<br>') {
-                            html = '';
-                        }
-
-                        ngModelController.$setViewValue(html);
-                    });
+                    if (html == '<br>') {
+                        html = '';
+                    }
+                    ngModelController.$setViewValue(html);
                 });
-                scope.isLink = false;
 
+
+                scope.isLink = false;
 
                 //Used to detect things like A tags and others that dont work with cmdValue().
                 function itemIs(tag) {
@@ -140,6 +137,8 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                         return '#fff';
                     }
                 }
+
+
 
 
                 textarea.on('click keyup focus mouseup', function() {
@@ -231,7 +230,7 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
 
-                
+
             }
         };
     })
@@ -347,13 +346,13 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
         }
 
         var createMenu = function(menu) {
-            
+
             if (angular.isDefined(menu) && menu !== '')
                 menu = stringToArray(menu)
             else
                 menu = defaultMenu;
 
-            var menuHtml = '<div>';
+            var menuHtml = '<div class="wysiwyg-menu">';
             menuHtml += getMenuStyles();
 
             for (var i = 0; i < menu.length; i++) {
@@ -372,8 +371,7 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
             var ret;
             try {
                 ret = JSON.parse(string.replace(/'/g, '"'));
-            } catch (e) {
-            }
+            } catch (e) {}
             return ret;
         }
 
