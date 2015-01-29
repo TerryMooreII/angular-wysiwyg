@@ -39,7 +39,7 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                 element.html(wysiwgGui.createMenu(attrs.textareaMenu));
                 $compile(element.contents())(scope);
 
-                var textarea = angular.element('div.wysiwyg-textarea');
+                var textarea = element.find('div.wysiwyg-textarea');
 
                 scope.fonts = [
                     'Georgia',
@@ -137,9 +137,6 @@ angular.module('wysiwyg.module', ['colorpicker.module'])
                         return '#fff';
                     }
                 }
-
-
-
 
                 textarea.on('click keyup focus mouseup', function() {
                     $timeout(function() {
