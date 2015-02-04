@@ -40,6 +40,7 @@ Option|Description
 **ng-model**		 | 			REQUIRED - The angular data model
 **textarea-id** 	 |			The id to assign to the editable div
 **textarea-class**	 |			The class(es) to assign to the the editable div
+**contenteditable 	 |  			Disable content editing
 **textarea-height**	 |			If the height is not specified in a text-area class then the hight of the editable div (default: 80px)
 **textarea-name**	 |			The name attribute of the editable div 
 **textarea-required**|			True/False HTML/AngularJS required validation
