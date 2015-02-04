@@ -3,7 +3,7 @@
   "name": "angular-wysiwyg",
   "description": "Angular WYSIWYG",
   "version": "1.1.6",
-  "homepage": "https://github.com/TerryMooreII/angular-wysiwyg",
+  "homepage": "https://github.com/mishavp2001/angular-wysiwyg.git",
   "main": "./angular-wysiwyg.js",
   "dependencies": {
     "angular": ">= 1.0.0",
