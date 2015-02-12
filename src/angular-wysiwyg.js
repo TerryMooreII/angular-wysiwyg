@@ -17,6 +17,18 @@ Requires:
 
 */
 
+/*
+    TODO: 
+        disabled - buttons and contenteditable div
+        ng-model-options
+        tab support
+        custom button fuctions
+
+        limit use of scope
+        use compile fuction instead of $compile
+        move button elements to js objects and use doc fragments 
+*/
+
 angular.module('wysiwyg.module', ['colorpicker.module'])
     .directive('wysiwyg', function($timeout, wysiwgGui, $compile) {
         return {
