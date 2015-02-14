@@ -27,9 +27,12 @@
           textarea-name="textareaQuestion" 
           textarea-required 
           ng-model="data.text" 
-          enable-bootstrap-title="true">
+          enable-bootstrap-title="true"
+          textarea-menu="[['bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript'], ['font']]"
+          textarea-custom="custom"
+          disabled="disabled">
         </wysiwyg>
-      
+      <button ng-click="setDisabled()">Disable</button>
     </div>
 
   </body>
