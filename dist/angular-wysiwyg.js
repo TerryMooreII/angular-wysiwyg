@@ -31,7 +31,7 @@ angular.module('wysiwyg.module', ['colorpicker.module']).directive('wysiwyg', [
   'wysiwgGui',
   function ($timeout, wysiwgGui) {
     return {
-      template: '<div>' + '<style>' + '   .wysiwyg-btn-group-margin{  margin-right:5px; }' + '   .wysiwyg-select{ height:30px;margin-bottom:1px;}' + '   .wysiwyg-colorpicker{ font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' + '</style>' + '<div class="wysiwyg-menu"></div>' + '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="true" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' + '</div>',
+      template: '<div>' + '<style>' + '   .wysiwyg-textarea[contentEditable="false"]{ background-color:#eee}' + '   .wysiwyg-btn-group-margin{  margin-right:5px; }' + '   .wysiwyg-select{ height:30px;margin-bottom:1px;}' + '   .wysiwyg-colorpicker{ font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' + '</style>' + '<div class="wysiwyg-menu"></div>' + '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' + '</div>',
       restrict: 'E',
       scope: {
         value: '=ngModel',
@@ -41,19 +41,30 @@ angular.module('wysiwyg.module', ['colorpicker.module']).directive('wysiwyg', [
         textareaClass: '@textareaClass',
         textareaRequired: '@textareaRequired',
         textareaId: '@textareaId',
-        textareaMenu: '@textareaMenu'
+        textareaMenu: '@textareaMenu',
+        disabled: '=?disabled'
       },
       replace: true,
       require: 'ngModel',
       compile: compile
     };
     function compile(element, attributes) {
-      element.html(wysiwgGui.createMenu(attributes.textareaMenu));
+      //make the menu.
+      //TODO: move back to link function for dynamic menus.
+      wysiwgGui.createMenu(attributes.textareaMenu);
       return { pre: link };
     }
     function link(scope, element, attrs, ngModelController) {
       //Create the menu system
       var textarea = element.find('div.wysiwyg-textarea');
+      scope.$watch('disabled', function (newValue) {
+        angular.element('div.wysiwyg-menu').find('button').each(function () {
+          angular.element(this).attr('disabled', newValue);
+        });
+        angular.element('div.wysiwyg-menu').find('select').each(function () {
+          angular.element(this).attr('disabled', newValue);
+        });
+      });
       scope.fonts = [
         'Georgia',
         'Palatino Linotype',
