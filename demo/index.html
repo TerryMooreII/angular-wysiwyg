@@ -10,7 +10,7 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <script src="scripts/app.js"></script>
     <script src="scripts/bootstrap-colorpicker-module.js"></script>
-    <script src="../src/angular-wysiwyg.js"></script>
+    <script src="../dist/angular-wysiwyg.min.js"></script>
   </head>
 
   <body ng-app="app">
@@ -30,6 +30,7 @@
           enable-bootstrap-title="true"
           textarea-menu="menu"
           textarea-custom-menu="custom"
+          fn="talk()"
           disabled="disabled">
         </wysiwyg>
       <button ng-click="setDisabled()">Disable</button>

@@ -39,6 +39,7 @@ gulp.task('express', function() {
   app.use(require('connect-livereload')({port: 4002}));
   app.use(express.static(__dirname));
   app.listen(4000);
+  console.log('Server started on port 4000')
 });
 
 var tinylr;

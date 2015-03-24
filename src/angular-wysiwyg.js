@@ -17,8 +17,6 @@ Requires:
 
 /*
     TODO: 
-        X disabled - buttons and contenteditable div
-        ng-model-options
         tab support
         custom button fuctions
 
@@ -33,6 +31,7 @@ Requires:
 
     var DEFAULT_MENU = [
         ['bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript'],
+        ['format-block'],
         ['font'],
         ['font-size'],
         ['font-color', 'hilite-color'],
@@ -48,10 +47,10 @@ Requires:
             return {
                 template: '<div>' +
                     '<style>' +
-                    '   .wysiwyg-textarea[contentEditable="false"]{ background-color:#eee}' +
-                    '   .wysiwyg-btn-group-margin{  margin-right:5px; }' +
-                    '   .wysiwyg-select{ height:30px;margin-bottom:1px;}' +
-                    '   .wysiwyg-colorpicker{ font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
+                    '   .wysiwyg-textarea[contentEditable="false"] { background-color:#eee}' +
+                    '   .wysiwyg-btn-group-margin { margin-right:5px; }' +
+                    '   .wysiwyg-select { height:30px;margin-bottom:1px;}' +
+                    '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
                     '</style>' +
                     '<div class="wysiwyg-menu"></div>' +
                     '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
@@ -66,16 +65,17 @@ Requires:
                     textareaRequired: '@textareaRequired',
                     textareaId: '@textareaId',
                     textareaMenu: '=textareaMenu',
-                    textareaCustomMenu: '=',
+                    textareaCustomMenu: '=textareaCustomMenu',
+                    fn: '&',
                     disabled: '=?disabled'
                 },
                 replace: true,
                 require: 'ngModel',
-                link: link
+                link: link,
+                transclude: true
             }
 
             function link(scope, element, attrs, ngModelController) {
-
 
                 var textarea = element.find('div.wysiwyg-textarea');
 
@@ -103,9 +103,33 @@ Requires:
                     value: '7',
                     size: '48px'
                 }];
-              
+
+                scope.formatBlocks = [{
+                    name: 'Heading Blocks',
+                    value: 'div'
+                }, {
+                    name: 'Heading 1',
+                    value: 'h1'
+                }, {
+                    name: 'Heading 2',
+                    value: 'h2'
+                }, {
+                    name: 'Heading 3',
+                    value: 'h3'
+                }, {
+                    name: 'Heading 4',
+                    value: 'h4'
+                }, {
+                    name: 'Heading 5',
+                    value: 'h5'
+                }, {
+                    name: 'Heading 6',
+                    value: 'h6'
+                }, ];
+                scope.formatBlock = scope.formatBlocks[0]
+
                 scope.fontSize = scope.fontSizes[1];
- 
+
                 scope.fonts = [
                     'Georgia',
                     'Palatino Linotype',
@@ -123,13 +147,13 @@ Requires:
                     'Lucida Console',
                     'Helvetica Neue'
                 ].sort();
-                
+
                 scope.font = scope.fonts[6];
 
                 init();
 
                 function init() {
-                    
+
                     compileMenu();
                     configureDisabledWatch();
                     configureBootstrapTitle();
@@ -155,7 +179,7 @@ Requires:
                 }
 
                 function configureBootstrapTitle() {
-                    if (attrs.enableBootstrapTitle === "true" && attrs.enableBootstrapTitle !== undefined){
+                    if (attrs.enableBootstrapTitle === "true" && attrs.enableBootstrapTitle !== undefined) {
                         element.find('button[title]').tooltip({
                             container: 'body'
                         })
@@ -164,12 +188,19 @@ Requires:
 
                 function configureListeners() {
 
-                    textarea.on('input keyup paste mouseup', function(event) {
+                    //Send message to calling controller that a button has been clicked.
+                    angular.element('.wysiwyg-menu').find('button').on('click', function() {
+                        var title = angular.element(this);
+                        scope.$emit('wysiwyg.click', title.attr('title') || title.attr('data-original-title'));
+                    })
+
+                    textarea.on('input keyup paste mouseup', function(e) {
                         var html = textarea.html();
 
                         if (html == '<br>') {
                             html = '';
                         }
+
                         ngModelController.$setViewValue(html);
                     });
 
@@ -196,6 +227,13 @@ Requires:
                                     return false;
                                 }
                             });
+                            scope.cmdValue('formatblock').toLowerCase()
+                            scope.formatBlocks.forEach(function(v, k) {
+                                if (scope.cmdValue('formatblock').toLowerCase() === v.value.toLowerCase()) {
+                                    scope.formatBlock = v;
+                                    return false;
+                                }
+                            });
 
                             scope.fontSizes.forEach(function(v, k) {
                                 if (scope.cmdValue('fontsize') === v.value) {
@@ -211,7 +249,8 @@ Requires:
                             element.find('button.wysiwyg-fontcolor').css("color", scope.fontColor);
 
                             scope.isLink = itemIs('A');
-                        }, 10);
+
+                        }, 0);
                     });
                 }
 
@@ -287,6 +326,10 @@ Requires:
                     scope.format('fontsize', scope.fontSize.value)
                 }
 
+                scope.setFormatBlock = function() {
+                    scope.format('formatBlock', scope.formatBlock.value);
+                }
+
                 scope.setFontColor = function() {
                     scope.format('forecolor', scope.fontColor)
                 }
@@ -304,7 +347,7 @@ Requires:
             var ELEMENTS = wysiwgGuiElements;
             var custom = {};
 
-            var setCustomElements = function(el){
+            var setCustomElements = function(el) {
                 custom = el;
             }
 
@@ -792,6 +835,23 @@ Requires:
                 }, {
                     name: 'ng-change',
                     value: 'setFontSize()'
+                }]
+            },
+            'format-block': {
+                tag: 'select',
+                classes: 'form-control wysiwyg-select',
+                attributes: [{
+                    name: "title",
+                    value: 'Format Block'
+                }, {
+                    name: 'ng-model',
+                    value: 'formatBlock'
+                }, {
+                    name: 'ng-options',
+                    value: 'f.name for f in formatBlocks'
+                }, {
+                    name: 'ng-change',
+                    value: 'setFormatBlock()'
                 }]
             },
             'link': {

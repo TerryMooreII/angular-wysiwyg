@@ -2,11 +2,12 @@
   "author": "Terry Moore II",
   "name": "angular-wysiwyg",
   "description": "Angular WYSIWYG",
-  "version": "1.1.6",
+  "version": "1.2",
   "homepage": "https://github.com/TerryMooreII/angular-wysiwyg",
-  "main": "./angular-wysiwyg.js",
+  "main": "./dist/angular-wysiwyg.min.js",
   "dependencies": {
     "angular": ">= 1.0.0",
-    "angular-bootstrap-colorpicker": ">= 3.0.0"
+    "angular-bootstrap-colorpicker": ">= 3.0.0",
+    "jquery": "~2.1.3"
   }
 }

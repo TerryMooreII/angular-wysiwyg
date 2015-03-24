@@ -1,8 +1,8 @@
 {
   "name": "angular-wysiwyg",
-  "version": "1.0.17",
+  "version": "1.2",
   "description": "AngularJS WYSIWYG editor",
-  "main": "index.js",
+  "main": "./dist/angular-azure-wysiwyg.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
