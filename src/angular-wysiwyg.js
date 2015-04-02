@@ -162,7 +162,7 @@ Requires:
 
                 function compileMenu() {
                     wysiwgGui.setCustomElements(scope.textareaCustomMenu)
-                    var menuDiv = document.querySelector('div.wysiwyg-menu');
+                    var menuDiv = element.children('div.wysiwyg-menu')[0];
                     menuDiv.appendChild(wysiwgGui.createMenu(scope.textareaMenu));
                     $compile(menuDiv)(scope);
                 }
@@ -499,7 +499,7 @@ Requires:
                     value: 'format(\'underline\')'
                 }, {
                     name: 'ng-class',
-                    value: '{ active: isUnderline }'
+                    value: '{ active: isUnderlined }'
                 }],
                 data: [{
                     tag: 'i',
