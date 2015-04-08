@@ -307,9 +307,10 @@ Requires:
                 }
 
                 scope.createLink = function() {
-                    var input = prompt('Enter the link URL');
-                    if (input && input !== undefined)
-                        scope.format('createlink', input);
+                    var inputUrl = prompt('Enter the link URL');
+                    var inputTitle = prompt('Enter the link title');
+                    if (inputUrl && inputTitle)
+                      document.execCommand('insertHTML', false, '<a href="' + inputUrl + '">' + inputTitle + '</a>');
                 }
 
                 scope.insertImage = function() {
