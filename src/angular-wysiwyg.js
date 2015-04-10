@@ -43,7 +43,7 @@ Requires:
     ];
 
     angular.module('wysiwyg.module', ['colorpicker.module'])
-        .directive('wysiwyg', function($timeout, wysiwgGui, $compile) {
+        .directive('wysiwyg', ['$timeout', 'wysiwgGui', '$compile', function($timeout, wysiwgGui, $compile) {
             return {
                 template: '<div>' +
                     '<style>' +
@@ -341,7 +341,7 @@ Requires:
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             };
-        })
+        }])
         .factory('wysiwgGui', function(wysiwgGuiElements) {
 
             var ELEMENTS = wysiwgGuiElements;
