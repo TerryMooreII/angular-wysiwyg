@@ -42,6 +42,67 @@ Requires:
         ['link', 'image']
     ];
 
+    var DIALOG_TEMPLATE = [
+        '<style>',
+        '.wysiwyg-link-container {',
+        '    position: absolute;',
+        '    width: 425px;',
+        '    height: 185px;',
+        '    padding: 20px;',
+        '    background: #FFFFFF;',
+        '    -webkit-border-radius: 5px;',
+        '    -moz-border-radius: 5px;',
+        '    border-radius: 5px;',
+        '    border: #7F7F7F solid 1px;',
+        '}',
+        ' .wysiwyg-link-container:after {',
+        '    content: "";',
+        '    position: absolute;',
+        '    border-style: solid;',
+        '    border-width: 0 13px 12px;',
+        '    border-color: #FFFFFF transparent;',
+        '    display: block;',
+        '    width: 0;',
+        '    z-index: 1;',
+        '    top: -12px;',
+        '    left: 18px;',
+        '}',
+        ' .wysiwyg-link-container:before {',
+        '    content: "";',
+        '    position: absolute;',
+        '    border-style: solid;',
+        '    border-width: 0 13px 12px;',
+        '    border-color: #7F7F7F transparent;',
+        '    display: block;',
+        '    width: 0;',
+        '    z-index: 0;',
+        '    top: -13px;',
+        '    left: 18px;',
+        '}',
+        '</style>',
+        '<div class="wysiwyg-link-container">',
+        '    <form class="form-horizontal">',
+        '        <div class="form-group">',
+        '            <label for="title" class="col-sm-2 control-label">Title</label>',
+        '            <div class="col-sm-10">',
+        '                <input type="text" class="form-control" id="title" placeholder="Title" ng-model="title">',
+        '            </div>',
+        '        </div>',
+        '        <div class="form-group">',
+        '            <label for="link" class="col-sm-2 control-label">Link</label>',
+        '            <div class="col-sm-10">',
+        '                <input type="text" class="form-control" id="link" placeholder="Link" ng-model="url">',
+        '            </div>',
+        '        </div>',
+        '        <div class="form-group">',
+        '            <div class="col-sm-offset-2 col-sm-10">',
+        '                <button type="submit" class="btn btn-primary" ng-click="apply()">Apply</button>',
+        '            </div>',
+        '        </div>',
+        '    </form>',
+        '</div>'
+    ];
+
     angular.module('wysiwyg.module', ['colorpicker.module'])
         .directive('wysiwyg', function($timeout, wysiwgGui, $compile) {
             return {
@@ -54,7 +115,8 @@ Requires:
                     '</style>' +
                     '<div class="wysiwyg-menu"></div>' +
                     '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
-                    '</div>',
+                    '<wysiwyg-link-dialog ng-show="showLinkDialog" fn="createLink()" title="linkTitle" url="linkUrl"></wysiwyg-link-dialog>' +
+                '</div>',
                 restrict: 'E',
                 scope: {
                     value: '=ngModel',
@@ -79,6 +141,7 @@ Requires:
 
                 var textarea = element.find('div.wysiwyg-textarea');
 
+                scope.showLinkDialog = false;
                 scope.isLink = false;
 
                 scope.fontSizes = [{
@@ -306,11 +369,22 @@ Requires:
                     return document.queryCommandValue(cmd);
                 }
 
-                scope.createLink = function() {
-                    var input = prompt('Enter the link URL');
-                    if (input && input !== undefined)
-                        scope.format('createlink', input);
+                scope.openLinkDialog = function() {
+                    scope.showLinkDialog = true;
                 }
+                // textarea.on('selectstart', function () {
+                        
+                //         $(document).on('mouseup', function() {
+                //             console.log(this.getSelection())
+                //             scope.linkTitle = this.getSelection();
+                //         });
+                //    });
+                scope.createLink = function(){
+                    scope.showLinkDialog = false;
+                    console.log(scope.linkTitle + ' ' + scope.linkUrl)
+                    scope.format('insertHTML', '<a href=' + scope.linkUrl + '>' + scope.linkTitle + '</a>');
+                }
+
 
                 scope.insertImage = function() {
                     var input = prompt('Enter the image URL');
@@ -862,7 +936,7 @@ Requires:
                     value: 'Link'
                 }, {
                     name: 'ng-click',
-                    value: 'createLink()'
+                    value: 'openLinkDialog()'
                 }, {
                     name: 'ng-show',
                     value: '!isLink'
@@ -889,6 +963,30 @@ Requires:
                     tag: 'i',
                     classes: 'fa fa-unlink'
                 }]
+            }
+        }).directive('wysiwygLinkDialog', function() {
+            return {
+                
+                restrict: 'E',
+                template: DIALOG_TEMPLATE.join(' '),
+                scope: {
+                    createFn: '&fn',
+                    title: '=',
+                    url: '='
+                },
+                link: link
+            }
+
+            function link(scope, element, attrs) {
+
+                scope.show = false;
+                scope.apply = apply
+
+
+                function apply() {
+                    scope.createFn(scope.title, scope.url);
+                }
+                
             }
         });
 })(angular)
