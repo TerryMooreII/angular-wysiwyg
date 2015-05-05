@@ -65,7 +65,7 @@ To do so you need to create a scope variable in your controller.  This variable 
             ['remove-format'],
             ['ordered-list', 'unordered-list', 'outdent', 'indent'],
             ['left-justify', 'center-justify', 'right-justify'],
-            ['code', 'quote', 'paragragh'],
+            ['code', 'quote', 'paragraph'],
             ['link', 'image']
         ];
 ```
@@ -95,7 +95,7 @@ left-justify |
 right-justify |
 center-justify |
 code |
-paragragh |
+paragraph |
 quote |
 link |
 image |

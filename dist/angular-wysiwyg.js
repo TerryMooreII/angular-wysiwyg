@@ -37,6 +37,7 @@ Requires:
       ['format-block'],
       ['font'],
       ['font-size'],
+      ['css-class'],
       [
         'font-color',
         'hilite-color'
@@ -82,7 +83,8 @@ Requires:
           textareaMenu: '=textareaMenu',
           textareaCustomMenu: '=textareaCustomMenu',
           fn: '&',
-          disabled: '=?disabled'
+          disabled: '=?disabled',
+          cssClasses: '=cssClasses'
         },
         replace: true,
         require: 'ngModel',
@@ -154,6 +156,8 @@ Requires:
         ];
         scope.formatBlock = scope.formatBlocks[0];
         scope.fontSize = scope.fontSizes[1];
+        scope.cssClasses.unshift('css');
+        scope.cssClass = scope.cssClasses[0];
         scope.fonts = [
           'Georgia',
           'Palatino Linotype',
@@ -326,6 +330,14 @@ Requires:
         };
         scope.setHiliteColor = function () {
           scope.format('hiliteColor', scope.hiliteColor);
+        };
+        scope.setCssClass = function () {
+          var classes = scope.cssClasses.join(' ');
+          var selection = window.getSelection().focusNode.parentNode;
+          $(selection).removeClass(classes);
+          if (scope.cssClass !== 'css') {
+            $(selection).addClass(scope.cssClass);
+          }
         };
         scope.format('enableobjectresizing', true);
         scope.format('styleWithCSS', true);
@@ -962,6 +974,28 @@ Requires:
           tag: 'i',
           classes: 'fa fa-unlink'
         }]
+    },
+    'css-class': {
+      tag: 'select',
+      classes: 'form-control wysiwyg-select',
+      attributes: [
+        {
+          name: 'title',
+          value: 'Image'
+        },
+        {
+          name: 'ng-model',
+          value: 'cssClass'
+        },
+        {
+          name: 'ng-options',
+          value: 'c for c in cssClasses'
+        },
+        {
+          name: 'ng-change',
+          value: 'setCssClass()'
+        }
+      ]
     }
   });
 }(angular));

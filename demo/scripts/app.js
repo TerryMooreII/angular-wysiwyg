@@ -15,8 +15,11 @@ app.controller('MyCtrl', function($scope) {
         ['ordered-list', 'unordered-list', 'outdent', 'indent'],
         ['left-justify', 'center-justify', 'right-justify'],
         ['code', 'quote', 'paragraph'],
-        ['link', 'image']
+        ['link', 'image'],
+        ['css-class']
     ];
+
+    $scope.cssClasses = ['test1', 'test2'];
 
     $scope.setDisabled = function() {
         $scope.disabled = !$scope.disabled;
