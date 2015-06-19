@@ -2,9 +2,23 @@
 Angular WYSIWYG directive.
 ===========================
 
-[Demo] (http://plnkr.co/edit/XMbvCtjIWWfddP5rpu5t?p=preview)  
 
 ![Awesome Shot] (https://raw.github.com/TerryMooreII/angular-wysiwyg/master/screenshots/screenshot.png)
+
+
+Pull Requests Welcome
+-------------------------
+
+
+Demo
+----
+
+```
+$ git clone https://github.com/TerryMooreII/angular-wysiwyg.git
+$ npm install 
+$ gulp server
+```
+Open browser to http://localhost:4000/demo
 
 
 Installation

@@ -190,6 +190,12 @@ Requires:
                     }
                 }
 
+                function insertTab(html, position) {
+                    var begining = html.substr(0, position);
+                    var end = html.substr(position);
+                    return begining + '<span style="white-space:pre">    </span>' + end;
+                }
+
                 function configureListeners() {
 
                     //Send message to calling controller that a button has been clicked.
@@ -206,6 +212,20 @@ Requires:
                         }
 
                         ngModelController.$setViewValue(html);
+                    }); 
+
+                    textarea.on('keydown', function(event){
+                        if (event.keyCode == 9){
+                            var TAB_SPACES = 4;
+                            var html = textarea.html();
+                            var selection = window.getSelection();
+                            var position = selection.anchorOffset;
+                    
+                            event.preventDefault();
+                            // html = insertTab(html, position);
+                            // textarea.html(html);
+                            // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);    
+                        }
                     });
 
                     textarea.on('click keyup focus mouseup', function() {
