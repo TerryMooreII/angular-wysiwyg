@@ -34,7 +34,6 @@ Requires:
         ['format-block'],
         ['font'],
         ['font-size'],
-        ['css-class'],
         ['font-color', 'hilite-color'],
         ['remove-format'],
         ['ordered-list', 'unordered-list', 'outdent', 'indent'],
@@ -61,7 +60,6 @@ Requires:
                     value: '=ngModel',
                     textareaHeight: '@textareaHeight',
                     textareaName: '@textareaName',
-                    textareaPlaceholder: '@textareaPlaceholder',
                     textareaClass: '@textareaClass',
                     textareaRequired: '@textareaRequired',
                     textareaId: '@textareaId',
@@ -69,7 +67,6 @@ Requires:
                     textareaCustomMenu: '=textareaCustomMenu',
                     fn: '&',
                     disabled: '=?disabled',
-                    cssClasses: '=cssClasses'
                 },
                 replace: true,
                 require: 'ngModel',
@@ -345,12 +342,6 @@ Requires:
                     scope.format('hiliteColor', scope.hiliteColor);
                 };
 
-                scope.setCssClass = function() {
-                    var classes = scope.cssClasses.join(' ');
-                    var selection = document.getSelection().toString();
-                    document.execCommand('insertHTML', false, '<span class="' + scope.cssClass + '">' + selection + '</span>');
-                };
-
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             }
@@ -422,8 +413,10 @@ Requires:
                     return el;
                 }
 
-                if (obj.text) {
+                if (obj.text && document.all) {
                     el.innerText = obj.text;
+                } else {
+                    el.textContent = obj.text;
                 }
 
                 if (obj.classes) {
