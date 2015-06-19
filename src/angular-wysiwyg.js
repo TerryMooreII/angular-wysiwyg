@@ -131,12 +131,12 @@ Requires:
                 scope.formatBlock = scope.formatBlocks[0];
 
                 scope.fontSize = scope.fontSizes[1];
-                
-                if (angular.isArray(scope.cssClasses)){
+
+                if (angular.isArray(scope.cssClasses)) {
                     scope.cssClasses.unshift('css');
                     scope.cssClass = scope.cssClasses[0];
                 }
-                
+
                 scope.fonts = [
                     'Georgia',
                     'Palatino Linotype',
@@ -344,8 +344,8 @@ Requires:
                 scope.setHiliteColor = function() {
                     scope.format('hiliteColor', scope.hiliteColor);
                 };
-                
-                scope.setCssClass= function() {
+
+                scope.setCssClass = function() {
                     var classes = scope.cssClasses.join(' ');
                     var selection = document.getSelection().toString();
                     document.execCommand('insertHTML', false, '<span class="' + scope.cssClass + '">' + selection + '</span>');
@@ -380,9 +380,9 @@ Requires:
                 angular.extend(ELEMENTS, custom);
 
                 //Get the default menu or the passed in menu
-                if (angular.isDefined(menu) && menu !== ''){
+                if (angular.isDefined(menu) && menu !== '') {
                     menu = menu; //stringToArray(menu)
-                }else{
+                } else {
                     menu = DEFAULT_MENU;
                 }
 
@@ -471,6 +471,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isBold }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -489,6 +492,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isItalic }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -507,6 +513,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isUnderlined }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -525,6 +534,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isStrikethrough }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -543,6 +555,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isSubscript }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -561,6 +576,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isSuperscript }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -576,6 +594,9 @@ Requires:
                 }, {
                     name: 'ng-click',
                     value: 'format(\'removeFormat\')'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -594,6 +615,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isOrderedList }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -612,6 +636,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isUnorderedList }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -627,6 +654,9 @@ Requires:
                 }, {
                     name: 'ng-click',
                     value: 'format(\'outdent\')'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -642,6 +672,9 @@ Requires:
                 }, {
                     name: 'ng-click',
                     value: 'format(\'indent\')'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -660,6 +693,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isLeftJustified }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -678,6 +714,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isCenterJustified }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -696,6 +735,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isRightJustified }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -714,6 +756,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isPre }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -732,6 +777,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isBlockquote }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -751,6 +799,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isParagraph }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }]
             },
             'image': {
@@ -762,6 +813,9 @@ Requires:
                 }, {
                     name: 'ng-click',
                     value: 'insertImage()'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -787,6 +841,9 @@ Requires:
                 }, {
                     name: 'ng-change',
                     value: 'setFontColor()'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }]
             },
             'hilite-color': {
@@ -808,6 +865,9 @@ Requires:
                 }, {
                     name: 'ng-change',
                     value: 'setHiliteColor()'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }]
             },
             'font': {
@@ -877,6 +937,9 @@ Requires:
                 data: [{
                     tag: 'i',
                     classes: 'fa fa-link'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }]
             },
             'unlink': {
@@ -891,28 +954,14 @@ Requires:
                 }, {
                     name: 'ng-show',
                     value: 'isLink'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
                     classes: 'fa fa-unlink'
                 }]
-            },
-            'css-class': {
-              tag: 'select',
-              classes: 'form-control wysiwyg-select',
-              attributes: [{
-                name: 'title',
-                value: 'Image'
-              }, {
-                name: 'ng-model',
-                value: 'cssClass'
-              }, {
-                name: 'ng-options',
-                value: 'c for c in cssClasses'
-              }, {
-                name: 'ng-change',
-                value: 'setCssClass()'
-              }]
-            },
+            }
         });
 })(angular);
