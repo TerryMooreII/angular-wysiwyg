@@ -80,7 +80,7 @@ Requires:
         '    left: 18px;',
         '}',
         '</style>',
-        '<div class="wysiwyg-link-container">',
+        '<div class="wysiwyg-link-container" ng-show="show">',
         '    <form class="form-horizontal">',
         '        <div class="form-group">',
         '            <label for="title" class="col-sm-2 control-label">Title</label>',
@@ -97,6 +97,7 @@ Requires:
         '        <div class="form-group">',
         '            <div class="col-sm-offset-2 col-sm-10">',
         '                <button type="submit" class="btn btn-primary" ng-click="apply()">Apply</button>',
+        '                <a href="#" ng-click="cancel()" class="btn btn-link">Cancel</a>' +
         '            </div>',
         '        </div>',
         '    </form>',
@@ -115,7 +116,7 @@ Requires:
                     '</style>' +
                     '<div class="wysiwyg-menu"></div>' +
                     '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
-                    '<wysiwyg-link-dialog ng-show="showLinkDialog" fn="createLink()" title="linkTitle" url="linkUrl"></wysiwyg-link-dialog>' +
+                    '<wysiwyg-link-dialog open="showLinkDialog" fn="createLink()" title="linkTitle" url="linkUrl"></wysiwyg-link-dialog>' +
                 '</div>',
                 restrict: 'E',
                 scope: {
@@ -393,27 +394,34 @@ Requires:
                     return document.queryCommandValue(cmd);
                 };
 
+
+                var cursorPos;
+                var endNode;
                 scope.openLinkDialog = function() {
                     scope.showLinkDialog = true;
+                    scope.linkTitle = window.getSelection().toString();
+                    cursorPos = window.getSelection().anchorOffset;
+                    endNode = $(window.getSelection().getRangeAt(0).endContainer.parentNode).index();
                 }
-                // textarea.on('selectstart', function () {
-                        
-                //         $(document).on('mouseup', function() {
-                //             console.log(this.getSelection())
-                //             scope.linkTitle = this.getSelection();
-                //         });
-                //    });
+
+                var setCursorPos = function(){
+                    var range = document.createRange();
+                    var sel = window.getSelection();
+                    console.log(endNode)
+                    range.setStart(textarea[0].childNodes[endNode+1].firstChild, cursorPos);
+                    range.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+
+                }
+
                 scope.createLink = function(){
-                    scope.showLinkDialog = false;
-                    console.log(scope.linkTitle + ' ' + scope.linkUrl)
+                    textarea.focus();
+                    setCursorPos(cursorPos);
+                    console.log(scope.linkTitle)
                     scope.format('insertHTML', '<a href=' + scope.linkUrl + '>' + scope.linkTitle + '</a>');
                 }
-                // scope.createLink = function() {
-                //     var input = prompt('Enter the link URL');
-                //     if (input && input !== undefined)
-                //         scope.format('createlink', input);
-                // };
-
+                
                 scope.insertImage = function() {
                     var input = prompt('Enter the image URL');
                     if (input && input !== undefined)
@@ -1056,13 +1064,13 @@ Requires:
             }
         }).directive('wysiwygLinkDialog', function() {
             return {
-                
                 restrict: 'E',
                 template: DIALOG_TEMPLATE.join(' '),
                 scope: {
                     createFn: '&fn',
                     title: '=',
-                    url: '='
+                    url: '=',
+                    open: '='
                 },
                 link: link
             }
@@ -1070,13 +1078,36 @@ Requires:
             function link(scope, element, attrs) {
 
                 scope.show = false;
-                scope.apply = apply
+                scope.apply = apply;
+                scope.cancel = cancel;
 
+                function cancel() {
+                    onClose();
+                }
+
+                function onClose() {
+                    scope.show = false;
+                    scope.open = false;
+                }
+
+                function onOpen() {
+                    scope.show = true;
+                    scope.url = '';
+                    scope.title = '';
+                }
 
                 function apply() {
                     scope.createFn(scope.title, scope.url);
+                    onClose();
                 }
                 
+                scope.$watch('open', function(newVal){
+                    if (newVal){
+                        onOpen();
+                    }else{
+                        onClose();
+                    }
+                });
             }
         });
 })(angular);
