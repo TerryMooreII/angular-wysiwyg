@@ -2,9 +2,23 @@
 Angular WYSIWYG directive.
 ===========================
 
-[Demo] (http://plnkr.co/edit/XMbvCtjIWWfddP5rpu5t?p=preview)  
 
 ![Awesome Shot] (https://raw.github.com/TerryMooreII/angular-wysiwyg/master/screenshots/screenshot.png)
+
+
+Pull Requests Welcome
+-------------------------
+
+
+Demo
+----
+
+```
+$ git clone https://github.com/TerryMooreII/angular-wysiwyg.git
+$ npm install 
+$ gulp server
+```
+Open browser to http://localhost:4000/demo
 
 
 Installation
@@ -45,7 +59,7 @@ Option|Description
 **textarea-required**|			True/False HTML/AngularJS required validation
 **enable-bootstrap-title**|		True/False whether or not to show the button hover title styled with bootstrap	
 **textarea-menu**    |          Cusomize the wysiwyg buttons and button groups ***See Below** If nothing is specified then the default buttons and groups will be shows.
-**disabled  |          Disable the buttons and wysiwig area 
+**disabled**  |          Disable the buttons and wysiwig area 
 
 Buttons
 --------------
@@ -65,7 +79,7 @@ To do so you need to create a scope variable in your controller.  This variable 
             ['remove-format'],
             ['ordered-list', 'unordered-list', 'outdent', 'indent'],
             ['left-justify', 'center-justify', 'right-justify'],
-            ['code', 'quote', 'paragragh'],
+            ['code', 'quote', 'paragraph'],
             ['link', 'image']
         ];
 ```
@@ -95,7 +109,7 @@ left-justify |
 right-justify |
 center-justify |
 code |
-paragragh |
+paragraph |
 quote |
 link |
 image |

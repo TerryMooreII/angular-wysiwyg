@@ -75,7 +75,6 @@ Requires:
           value: '=ngModel',
           textareaHeight: '@textareaHeight',
           textareaName: '@textareaName',
-          textareaPlaceholder: '@textareaPlaceholder',
           textareaClass: '@textareaClass',
           textareaRequired: '@textareaRequired',
           textareaId: '@textareaId',
@@ -154,6 +153,10 @@ Requires:
         ];
         scope.formatBlock = scope.formatBlocks[0];
         scope.fontSize = scope.fontSizes[1];
+        if (angular.isArray(scope.cssClasses)) {
+          scope.cssClasses.unshift('css');
+          scope.cssClass = scope.cssClasses[0];
+        }
         scope.fonts = [
           'Georgia',
           'Palatino Linotype',
@@ -200,18 +203,34 @@ Requires:
             element.find('button[title]').tooltip({ container: 'body' });
           }
         }
+        function insertTab(html, position) {
+          var begining = html.substr(0, position);
+          var end = html.substr(position);
+          return begining + '<span style="white-space:pre">    </span>' + end;
+        }
         function configureListeners() {
           //Send message to calling controller that a button has been clicked.
           angular.element('.wysiwyg-menu').find('button').on('click', function () {
             var title = angular.element(this);
             scope.$emit('wysiwyg.click', title.attr('title') || title.attr('data-original-title'));
           });
-          textarea.on('input keyup paste mouseup', function (e) {
+          textarea.on('input keyup paste mouseup', function () {
             var html = textarea.html();
             if (html == '<br>') {
               html = '';
             }
             ngModelController.$setViewValue(html);
+          });
+          textarea.on('keydown', function (event) {
+            if (event.keyCode == 9) {
+              var TAB_SPACES = 4;
+              var html = textarea.html();
+              var selection = window.getSelection();
+              var position = selection.anchorOffset;
+              event.preventDefault();  // html = insertTab(html, position);
+                                       // textarea.html(html);
+                                       // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);    
+            }
           });
           textarea.on('click keyup focus mouseup', function () {
             $timeout(function () {
@@ -226,8 +245,8 @@ Requires:
               scope.isRightJustified = scope.cmdState('justifyright');
               scope.isLeftJustified = scope.cmdState('justifyleft');
               scope.isCenterJustified = scope.cmdState('justifycenter');
-              scope.isPre = scope.cmdValue('formatblock') == 'pre';
-              scope.isBlockquote = scope.cmdValue('formatblock') == 'blockquote';
+              scope.isPre = scope.cmdValue('formatblock') === 'pre';
+              scope.isBlockquote = scope.cmdValue('formatblock') === 'blockquote';
               scope.isOrderedList = scope.cmdState('insertorderedlist');
               scope.isUnorderedList = scope.cmdState('insertunorderedlist');
               scope.fonts.forEach(function (v, k) {
@@ -275,7 +294,7 @@ Requires:
         function getHiliteColor() {
           var selection = window.getSelection().getRangeAt(0);
           if (selection) {
-            var style = $(selection.startContainer.parentNode).attr('style');
+            var style = angular.element(selection.startContainer.parentNode).attr('style');
             if (!angular.isDefined(style))
               return false;
             var a = style.split(';');
@@ -296,7 +315,7 @@ Requires:
         scope.format = function (cmd, arg) {
           document.execCommand(cmd, false, arg);
         };
-        scope.cmdState = function (cmd, id) {
+        scope.cmdState = function (cmd) {
           return document.queryCommandState(cmd);
         };
         scope.cmdValue = function (cmd) {
@@ -330,7 +349,6 @@ Requires:
         scope.format('enableobjectresizing', true);
         scope.format('styleWithCSS', true);
       }
-      ;
     }
   ]).factory('wysiwgGui', [
     'wysiwgGuiElements',
@@ -352,21 +370,23 @@ Requires:
       var createMenu = function (menu) {
         angular.extend(ELEMENTS, custom);
         //Get the default menu or the passed in menu
-        if (angular.isDefined(menu) && menu !== '')
-          menu = menu;
-        else
+        if (angular.isDefined(menu) && menu !== '') {
+          menu = menu;  //stringToArray(menu)
+        } else {
           menu = DEFAULT_MENU;
+        }
         //create div to add everything to.
         var startDiv = document.createElement('div');
+        var el;
         for (var i = 0; i < menu.length; i++) {
           var menuGroup = create(getMenuGroup());
           for (var j = 0; j < menu[i].length; j++) {
             //link has two functions link and unlink
             if (menu[i][j] === 'link') {
-              var el = create(getMenuItem('unlink'));
+              el = create(getMenuItem('unlink'));
               menuGroup.appendChild(el);
             }
-            var el = create(getMenuItem(menu[i][j]));
+            el = create(getMenuItem(menu[i][j]));
             menuGroup.appendChild(el);
           }
           startDiv.appendChild(menuGroup);
@@ -384,8 +404,10 @@ Requires:
           el = document.createElement('span');
           return el;
         }
-        if (obj.text) {
+        if (obj.text && document.all) {
           el.innerText = obj.text;
+        } else {
+          el.textContent = obj.text;
         }
         if (obj.classes) {
           el.className = obj.classes;
@@ -408,14 +430,6 @@ Requires:
         }
         return el;
       }
-      var stringToArray = function (string) {
-        var ret;
-        try {
-          ret = JSON.parse(string.replace(/'/g, '"'));
-        } catch (e) {
-        }
-        return ret;
-      };
       return {
         createMenu: createMenu,
         setCustomElements: setCustomElements
@@ -437,6 +451,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isBold }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -459,6 +477,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isItalic }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -481,6 +503,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isUnderlined }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -503,6 +529,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isStrikethrough }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -525,6 +555,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isSubscript }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -547,6 +581,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isSuperscript }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -565,6 +603,10 @@ Requires:
         {
           name: 'ng-click',
           value: 'format(\'removeFormat\')'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -587,6 +629,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isOrderedList }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -609,6 +655,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isUnorderedList }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -627,6 +677,10 @@ Requires:
         {
           name: 'ng-click',
           value: 'format(\'outdent\')'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -645,6 +699,10 @@ Requires:
         {
           name: 'ng-click',
           value: 'format(\'indent\')'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -667,6 +725,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isLeftJustified }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -689,6 +751,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isCenterJustified }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -711,6 +777,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isRightJustified }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -733,6 +803,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isPre }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -755,6 +829,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isBlockquote }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -778,6 +856,10 @@ Requires:
         {
           name: 'ng-class',
           value: '{ active: isParagraph }'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ]
     },
@@ -792,6 +874,10 @@ Requires:
         {
           name: 'ng-click',
           value: 'insertImage()'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{
@@ -823,6 +909,10 @@ Requires:
         {
           name: 'ng-change',
           value: 'setFontColor()'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ]
     },
@@ -850,6 +940,10 @@ Requires:
         {
           name: 'ng-change',
           value: 'setHiliteColor()'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ]
     },
@@ -936,10 +1030,16 @@ Requires:
           value: '!isLink'
         }
       ],
-      data: [{
+      data: [
+        {
           tag: 'i',
           classes: 'fa fa-link'
-        }]
+        },
+        {
+          name: 'type',
+          value: 'button'
+        }
+      ]
     },
     'unlink': {
       tag: 'button',
@@ -956,6 +1056,10 @@ Requires:
         {
           name: 'ng-show',
           value: 'isLink'
+        },
+        {
+          name: 'type',
+          value: 'button'
         }
       ],
       data: [{

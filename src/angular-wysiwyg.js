@@ -122,20 +122,19 @@ Requires:
                     value: '=ngModel',
                     textareaHeight: '@textareaHeight',
                     textareaName: '@textareaName',
-                    textareaPlaceholder: '@textareaPlaceholder',
                     textareaClass: '@textareaClass',
                     textareaRequired: '@textareaRequired',
                     textareaId: '@textareaId',
                     textareaMenu: '=textareaMenu',
                     textareaCustomMenu: '=textareaCustomMenu',
                     fn: '&',
-                    disabled: '=?disabled'
+                    disabled: '=?disabled',
                 },
                 replace: true,
                 require: 'ngModel',
                 link: link,
                 transclude: true
-            }
+            };
 
             function link(scope, element, attrs, ngModelController) {
 
@@ -189,9 +188,14 @@ Requires:
                     name: 'Heading 6',
                     value: 'h6'
                 }, ];
-                scope.formatBlock = scope.formatBlocks[0]
+                scope.formatBlock = scope.formatBlocks[0];
 
                 scope.fontSize = scope.fontSizes[1];
+
+                if (angular.isArray(scope.cssClasses)) {
+                    scope.cssClasses.unshift('css');
+                    scope.cssClass = scope.cssClasses[0];
+                }
 
                 scope.fonts = [
                     'Georgia',
@@ -224,7 +228,7 @@ Requires:
                 }
 
                 function compileMenu() {
-                    wysiwgGui.setCustomElements(scope.textareaCustomMenu)
+                    wysiwgGui.setCustomElements(scope.textareaCustomMenu);
                     var menuDiv = element.children('div.wysiwyg-menu')[0];
                     menuDiv.appendChild(wysiwgGui.createMenu(scope.textareaMenu));
                     $compile(menuDiv)(scope);
@@ -237,16 +241,22 @@ Requires:
                         });
                         angular.element('div.wysiwyg-menu').find('select').each(function() {
                             angular.element(this).attr('disabled', newValue);
-                        })
-                    })
+                        });
+                    });
                 }
 
                 function configureBootstrapTitle() {
-                    if (attrs.enableBootstrapTitle === "true" && attrs.enableBootstrapTitle !== undefined) {
+                    if (attrs.enableBootstrapTitle === 'true' && attrs.enableBootstrapTitle !== undefined) {
                         element.find('button[title]').tooltip({
                             container: 'body'
-                        })
+                        });
                     }
+                }
+
+                function insertTab(html, position) {
+                    var begining = html.substr(0, position);
+                    var end = html.substr(position);
+                    return begining + '<span style="white-space:pre">    </span>' + end;
                 }
 
                 function configureListeners() {
@@ -255,9 +265,9 @@ Requires:
                     angular.element('.wysiwyg-menu').find('button').on('click', function() {
                         var title = angular.element(this);
                         scope.$emit('wysiwyg.click', title.attr('title') || title.attr('data-original-title'));
-                    })
+                    });
 
-                    textarea.on('input keyup paste mouseup', function(e) {
+                    textarea.on('input keyup paste mouseup', function() {
                         var html = textarea.html();
 
                         if (html == '<br>') {
@@ -265,6 +275,20 @@ Requires:
                         }
 
                         ngModelController.$setViewValue(html);
+                    }); 
+
+                    textarea.on('keydown', function(event){
+                        if (event.keyCode == 9){
+                            var TAB_SPACES = 4;
+                            var html = textarea.html();
+                            var selection = window.getSelection();
+                            var position = selection.anchorOffset;
+                    
+                            event.preventDefault();
+                            // html = insertTab(html, position);
+                            // textarea.html(html);
+                            // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);    
+                        }
                     });
 
                     textarea.on('click keyup focus mouseup', function() {
@@ -278,8 +302,8 @@ Requires:
                             scope.isRightJustified = scope.cmdState('justifyright');
                             scope.isLeftJustified = scope.cmdState('justifyleft');
                             scope.isCenterJustified = scope.cmdState('justifycenter');
-                            scope.isPre = scope.cmdValue('formatblock') == "pre";
-                            scope.isBlockquote = scope.cmdValue('formatblock') == "blockquote";
+                            scope.isPre = scope.cmdValue('formatblock') === 'pre';
+                            scope.isBlockquote = scope.cmdValue('formatblock') === 'blockquote';
 
                             scope.isOrderedList = scope.cmdState('insertorderedlist');
                             scope.isUnorderedList = scope.cmdState('insertunorderedlist');
@@ -290,7 +314,7 @@ Requires:
                                     return false;
                                 }
                             });
-                            scope.cmdValue('formatblock').toLowerCase()
+                            scope.cmdValue('formatblock').toLowerCase();
                             scope.formatBlocks.forEach(function(v, k) {
                                 if (scope.cmdValue('formatblock').toLowerCase() === v.value.toLowerCase()) {
                                     scope.formatBlock = v;
@@ -303,13 +327,13 @@ Requires:
                                     scope.fontSize = v;
                                     return false;
                                 }
-                            })
+                            });
 
                             scope.hiliteColor = getHiliteColor();
-                            element.find('button.wysiwyg-hiliteColor').css("background-color", scope.hiliteColor);
+                            element.find('button.wysiwyg-hiliteColor').css('background-color', scope.hiliteColor);
 
                             scope.fontColor = scope.cmdValue('forecolor');
-                            element.find('button.wysiwyg-fontcolor').css("color", scope.fontColor);
+                            element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
 
                             scope.isLink = itemIs('A');
 
@@ -335,7 +359,7 @@ Requires:
                 function getHiliteColor() {
                     var selection = window.getSelection().getRangeAt(0);
                     if (selection) {
-                        var style = $(selection.startContainer.parentNode).attr('style');
+                        var style = angular.element(selection.startContainer.parentNode).attr('style');
 
                         if (!angular.isDefined(style))
                             return false;
@@ -359,15 +383,15 @@ Requires:
 
                 scope.format = function(cmd, arg) {
                     document.execCommand(cmd, false, arg);
-                }
+                };
 
-                scope.cmdState = function(cmd, id) {
+                scope.cmdState = function(cmd) {
                     return document.queryCommandState(cmd);
-                }
+                };
 
                 scope.cmdValue = function(cmd) {
                     return document.queryCommandValue(cmd);
-                }
+                };
 
                 scope.openLinkDialog = function() {
                     scope.showLinkDialog = true;
@@ -384,37 +408,41 @@ Requires:
                     console.log(scope.linkTitle + ' ' + scope.linkUrl)
                     scope.format('insertHTML', '<a href=' + scope.linkUrl + '>' + scope.linkTitle + '</a>');
                 }
-
+                // scope.createLink = function() {
+                //     var input = prompt('Enter the link URL');
+                //     if (input && input !== undefined)
+                //         scope.format('createlink', input);
+                // };
 
                 scope.insertImage = function() {
                     var input = prompt('Enter the image URL');
                     if (input && input !== undefined)
                         scope.format('insertimage', input);
-                }
+                };
 
                 scope.setFont = function() {
-                    scope.format('fontname', scope.font)
-                }
+                    scope.format('fontname', scope.font);
+                };
 
                 scope.setFontSize = function() {
-                    scope.format('fontsize', scope.fontSize.value)
-                }
+                    scope.format('fontsize', scope.fontSize.value);
+                };
 
                 scope.setFormatBlock = function() {
                     scope.format('formatBlock', scope.formatBlock.value);
-                }
+                };
 
                 scope.setFontColor = function() {
-                    scope.format('forecolor', scope.fontColor)
-                }
+                    scope.format('forecolor', scope.fontColor);
+                };
 
                 scope.setHiliteColor = function() {
-                    scope.format('hiliteColor', scope.hiliteColor)
-                }
+                    scope.format('hiliteColor', scope.hiliteColor);
+                };
 
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
-            };
+            }
         })
         .factory('wysiwgGui', function(wysiwgGuiElements) {
 
@@ -423,31 +451,33 @@ Requires:
 
             var setCustomElements = function(el) {
                 custom = el;
-            }
+            };
 
             var getMenuGroup = function() {
                 return {
                     tag: 'div',
                     classes: 'btn-group btn-group-sm wysiwyg-btn-group-margin',
-                }
-            }
+                };
+            };
 
             var getMenuItem = function(item) {
                 return ELEMENTS[item] || {};
-            }
+            };
 
             var createMenu = function(menu) {
 
                 angular.extend(ELEMENTS, custom);
 
                 //Get the default menu or the passed in menu
-                if (angular.isDefined(menu) && menu !== '')
-                    menu = menu //stringToArray(menu)
-                else
+                if (angular.isDefined(menu) && menu !== '') {
+                    menu = menu; //stringToArray(menu)
+                } else {
                     menu = DEFAULT_MENU;
+                }
 
                 //create div to add everything to.
                 var startDiv = document.createElement('div');
+                var el;
 
                 for (var i = 0; i < menu.length; i++) {
                     var menuGroup = create(getMenuGroup());
@@ -455,18 +485,18 @@ Requires:
                     for (var j = 0; j < menu[i].length; j++) {
                         //link has two functions link and unlink
                         if (menu[i][j] === 'link') {
-                            var el = create(getMenuItem('unlink'));
+                            el = create(getMenuItem('unlink'));
                             menuGroup.appendChild(el);
                         }
 
-                        var el = create(getMenuItem(menu[i][j]));
+                        el = create(getMenuItem(menu[i][j]));
                         menuGroup.appendChild(el);
                     }
 
                     startDiv.appendChild(menuGroup);
                 }
                 return startDiv;
-            }
+            };
 
 
             function create(obj) {
@@ -481,8 +511,10 @@ Requires:
                     return el;
                 }
 
-                if (obj.text) {
+                if (obj.text && document.all) {
                     el.innerText = obj.text;
+                } else {
+                    el.textContent = obj.text;
                 }
 
                 if (obj.classes) {
@@ -511,18 +543,10 @@ Requires:
                 return el;
             }
 
-            var stringToArray = function(string) {
-                var ret;
-                try {
-                    ret = JSON.parse(string.replace(/'/g, '"'));
-                } catch (e) {}
-                return ret;
-            }
-
             return {
                 createMenu: createMenu,
                 setCustomElements: setCustomElements
-            }
+            };
 
         })
         .value('wysiwgGuiElements', {
@@ -530,7 +554,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Bold'
                 }, {
                     name: 'ng-click',
@@ -538,6 +562,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isBold }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -548,7 +575,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Italic'
                 }, {
                     name: 'ng-click',
@@ -556,6 +583,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isItalic }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -566,7 +596,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Underline'
                 }, {
                     name: 'ng-click',
@@ -574,6 +604,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isUnderlined }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -584,7 +617,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Strikethrough'
                 }, {
                     name: 'ng-click',
@@ -592,6 +625,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isStrikethrough }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -602,7 +638,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Subscript'
                 }, {
                     name: 'ng-click',
@@ -610,6 +646,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isSubscript }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -620,7 +659,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Superscript'
                 }, {
                     name: 'ng-click',
@@ -628,6 +667,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isSuperscript }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -638,11 +680,14 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Remove Formatting'
                 }, {
                     name: 'ng-click',
                     value: 'format(\'removeFormat\')'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -653,7 +698,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Ordered List'
                 }, {
                     name: 'ng-click',
@@ -661,6 +706,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isOrderedList }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -671,7 +719,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Unordered List'
                 }, {
                     name: 'ng-click',
@@ -679,6 +727,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isUnorderedList }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -689,11 +740,14 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Outdent'
                 }, {
                     name: 'ng-click',
                     value: 'format(\'outdent\')'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -704,11 +758,14 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Indent'
                 }, {
                     name: 'ng-click',
                     value: 'format(\'indent\')'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -719,7 +776,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Left Justify'
                 }, {
                     name: 'ng-click',
@@ -727,6 +784,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isLeftJustified }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -737,7 +797,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Center Justify'
                 }, {
                     name: 'ng-click',
@@ -745,6 +805,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isCenterJustified }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -755,7 +818,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Right Justify'
                 }, {
                     name: 'ng-click',
@@ -763,6 +826,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isRightJustified }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -773,7 +839,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Code'
                 }, {
                     name: 'ng-click',
@@ -781,6 +847,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isPre }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -791,7 +860,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Quote'
                 }, {
                     name: 'ng-click',
@@ -799,6 +868,9 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isBlockquote }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -810,7 +882,7 @@ Requires:
                 classes: 'btn btn-default',
                 text: 'P',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Paragragh'
                 }, {
                     name: 'ng-click',
@@ -818,17 +890,23 @@ Requires:
                 }, {
                     name: 'ng-class',
                     value: '{ active: isParagraph }'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }]
             },
             'image': {
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Image'
                 }, {
                     name: 'ng-click',
                     value: 'insertImage()'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -840,7 +918,7 @@ Requires:
                 classes: 'btn btn-default wysiwyg-colorpicker wysiwyg-fontcolor',
                 text: 'A',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Font Color'
                 }, {
                     name: 'colorpicker',
@@ -854,6 +932,9 @@ Requires:
                 }, {
                     name: 'ng-change',
                     value: 'setFontColor()'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }]
             },
             'hilite-color': {
@@ -861,7 +942,7 @@ Requires:
                 classes: 'btn btn-default wysiwyg-colorpicker wysiwyg-fontcolor',
                 text: 'H',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Hilite Color'
                 }, {
                     name: 'colorpicker',
@@ -875,13 +956,16 @@ Requires:
                 }, {
                     name: 'ng-change',
                     value: 'setHiliteColor()'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }]
             },
             'font': {
                 tag: 'select',
                 classes: 'form-control wysiwyg-select',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Image'
                 }, {
                     name: 'ng-model',
@@ -898,7 +982,7 @@ Requires:
                 tag: 'select',
                 classes: 'form-control wysiwyg-select',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Image'
                 }, {
                     name: 'ng-model',
@@ -915,7 +999,7 @@ Requires:
                 tag: 'select',
                 classes: 'form-control wysiwyg-select',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Format Block'
                 }, {
                     name: 'ng-model',
@@ -932,7 +1016,7 @@ Requires:
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Link'
                 }, {
                     name: 'ng-click',
@@ -944,13 +1028,16 @@ Requires:
                 data: [{
                     tag: 'i',
                     classes: 'fa fa-link'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }]
             },
             'unlink': {
                 tag: 'button',
                 classes: 'btn btn-default',
                 attributes: [{
-                    name: "title",
+                    name: 'title',
                     value: 'Unlink'
                 }, {
                     name: 'ng-click',
@@ -958,6 +1045,9 @@ Requires:
                 }, {
                     name: 'ng-show',
                     value: 'isLink'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
@@ -989,4 +1079,4 @@ Requires:
                 
             }
         });
-})(angular)
+})(angular);
