@@ -1028,18 +1028,16 @@ Requires:
         {
           name: 'ng-show',
           value: '!isLink'
-        }
-      ],
-      data: [
-        {
-          tag: 'i',
-          classes: 'fa fa-link'
         },
         {
           name: 'type',
           value: 'button'
         }
-      ]
+      ],
+      data: [{
+          tag: 'i',
+          classes: 'fa fa-link'
+        }]
     },
     'unlink': {
       tag: 'button',
