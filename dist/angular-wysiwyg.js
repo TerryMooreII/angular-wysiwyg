@@ -78,7 +78,7 @@ Requires:
           textareaName: '@textareaName',
           textareaClass: '@textareaClass',
           textareaRequired: '@textareaRequired',
-          textareaId: '@textareaId',
+          textareaId: '@textareaid',
           textareaMenu: '=textareaMenu',
           textareaCustomMenu: '=textareaCustomMenu',
           fn: '&',
@@ -207,7 +207,12 @@ Requires:
         function insertTab(html, position) {
           var begining = html.substr(0, position);
           var end = html.substr(position);
-          return begining + '<span style="white-space:pre">    </span>' + end;
+          var TAB_SPACES = 4;
+          var space;
+          for (var i = 0; i < TAB_SPACES; i++) {
+            space += '&nbsp;';
+          }
+          return begining + '<span style="white-space:pre">' + space + '</span>' + end;
         }
         function configureListeners() {
           //Send message to calling controller that a button has been clicked.
@@ -331,6 +336,32 @@ Requires:
           var input = prompt('Enter the image URL');
           if (input && input !== undefined)
             scope.format('insertimage', input);
+        };
+        function findParent(node, id) {
+          if (node === null)
+            return null;
+          if (node.id === id)
+            return node;
+          return findParent(node.parentNode, id);
+        }
+        scope.insertVideo = function () {
+          var input = prompt('Enter the video URL');
+          if (input && input !== undefined) {
+            var videoElement = '<iframe src=' + encodeURI(input) + '></iframe>';
+            var range;
+            var sel = document.getSelection();
+            if (sel.rangeCount > 0) {
+              range = sel.getRangeAt(0);
+              var node = findParent(range.startContainer, scope.textareaId);
+              if (node === null)
+                return;
+            } else {
+              console.log('No range selected');
+              return;
+            }
+            var nnode = range.createContextualFragment(videoElement);
+            range.insertNode(nnode);
+          }
         };
         scope.setFont = function () {
           scope.format('fontname', scope.font);
@@ -905,7 +936,7 @@ Requires:
       ],
       data: [{
           tag: 'i',
-          classes: 'fa fa-picture-o'
+          classes: 'fa fa-video-o'
         }]
     },
     'font-color': {

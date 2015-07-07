@@ -880,7 +880,7 @@ Requires:
                 }],
                 data: [{
                     tag: 'i',
-                    classes: 'fa fa-picture-o'
+                    classes: 'fa fa-youtube-play'
                 }]
             },
             'font-color': {
