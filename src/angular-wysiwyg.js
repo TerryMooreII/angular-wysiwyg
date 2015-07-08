@@ -345,6 +345,7 @@ Requires:
                         scope.format('insertimage', input);
                 };
 
+                //Finds the parent of a node with the specified id, or returns null
                 function findParent(node, id){
                   if(node === null) return null;
                   if(node.id === id) return node;
@@ -352,21 +353,28 @@ Requires:
                 }
 
                 scope.insertVideo = function() {
+                    var sel = document.getSelection();
+                    if(sel.rangeCount <= 0) { console.log("No range selected"); return;}
+
                     var input = prompt('Enter the video URL');
                     if (input && input !== undefined)
                     {
+                      //Convertion of normal youtube and vimeo linkt into imbed links
+                      var match;
+                      if((match = /youtube\.com\/watch\?v=(.*)/.exec(input)) !== null){
+                        input = "https://www.youtube.com/embed/" + match[1];
+                      }
+                      else if ((match = /[^player]\/vimeo\.com\/(.*)/.exec(input)) !== null) {
+                        input = "https://player.vimeo.com/video/" + match[1];
+                      }
+
                       var videoElement = '<iframe src=' + encodeURI(input) + '></iframe>';
-                      var range;
-                      var sel = document.getSelection();
-                      if(sel.rangeCount > 0) {
-                        range = sel.getRangeAt(0);
-                        var node = findParent(range.startContainer, scope.textareaId);
-                        if(node === null) return;
-                      }
-                      else{
-                        console.log("No range selected");
-                        return;
-                      }
+
+                      var range = sel.getRangeAt(0);
+
+                      //Prevent user from addin videos outside of the element
+                      if(findParent(range.startContainer, scope.textareaId) === null) return;
+
                       var nnode = range.createContextualFragment(videoElement);
                       range.insertNode(nnode);
                     }

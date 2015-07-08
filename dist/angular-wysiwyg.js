@@ -936,7 +936,7 @@ Requires:
       ],
       data: [{
           tag: 'i',
-          classes: 'fa fa-video-o'
+          classes: 'fa fa-youtube-play'
         }]
     },
     'font-color': {

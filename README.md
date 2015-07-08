@@ -80,7 +80,7 @@ To do so you need to create a scope variable in your controller.  This variable 
             ['ordered-list', 'unordered-list', 'outdent', 'indent'],
             ['left-justify', 'center-justify', 'right-justify'],
             ['code', 'quote', 'paragraph'],
-            ['link', 'image']
+            ['link', 'image', 'video']
         ];
 ```
 
@@ -88,7 +88,7 @@ So above each array will end up being a group of the specified buttons.
 
 **Note:**  The `font` and `font-size` dropdowns must be in thier own group.  
 
-List of possible buttons |
+List of possible buttons | Notes
 ------------|
 bold |
 italic |
@@ -113,3 +113,4 @@ paragraph |
 quote |
 link |
 image |
+video | Converts youtube and vimeo links to imbedded ones
