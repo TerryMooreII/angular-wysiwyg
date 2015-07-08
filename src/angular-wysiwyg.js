@@ -362,10 +362,10 @@ Requires:
                       //Convertion of normal youtube and vimeo linkt into imbed links
                       var match;
                       if((match = /youtube\.com\/watch\?v=(.*)/.exec(input)) !== null){
-                        input = "https://www.youtube.com/embed/" + match[1];
+                        input = 'https://www.youtube.com/embed/' + match[1];
                       }
                       else if ((match = /[^player]\/vimeo\.com\/(.*)/.exec(input)) !== null) {
-                        input = "https://player.vimeo.com/video/" + match[1];
+                        input = 'https://player.vimeo.com/video/' + match[1];
                       }
 
                       var videoElement = '<iframe src=' + encodeURI(input) + '></iframe>';
