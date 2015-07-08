@@ -89,7 +89,7 @@ So above each array will end up being a group of the specified buttons.
 **Note:**  The `font` and `font-size` dropdowns must be in thier own group.  
 
 List of possible buttons | Notes
-------------|
+------------|--------------
 bold |
 italic |
 underline |

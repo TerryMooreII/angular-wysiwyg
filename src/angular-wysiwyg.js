@@ -425,7 +425,6 @@ Requires:
             };
 
             var createMenu = function(menu) {
-
                 angular.extend(ELEMENTS, custom);
 
                 //Get the default menu or the passed in menu
@@ -438,9 +437,9 @@ Requires:
                 //create div to add everything to.
                 var startDiv = document.createElement('div');
                 var el;
-
                 for (var i = 0; i < menu.length; i++) {
                     var menuGroup = create(getMenuGroup());
+                    //console.log(menuGroup);
 
                     for (var j = 0; j < menu[i].length; j++) {
                         //link has two functions link and unlink
@@ -473,7 +472,7 @@ Requires:
 
                 if (obj.text && document.all) {
                     el.innerText = obj.text;
-                } else {
+                } else if(obj.text){
                     el.textContent = obj.text;
                 }
 
