@@ -418,6 +418,7 @@ Requires:
         var el;
         for (var i = 0; i < menu.length; i++) {
           var menuGroup = create(getMenuGroup());
+          //console.log(menuGroup);
           for (var j = 0; j < menu[i].length; j++) {
             //link has two functions link and unlink
             if (menu[i][j] === 'link') {
@@ -444,7 +445,7 @@ Requires:
         }
         if (obj.text && document.all) {
           el.innerText = obj.text;
-        } else {
+        } else if (obj.text) {
           el.textContent = obj.text;
         }
         if (obj.classes) {
