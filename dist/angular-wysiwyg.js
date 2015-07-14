@@ -125,31 +125,31 @@ Requires:
         scope.formatBlocks = [
           {
             name: 'Heading Blocks',
-            value: 'div'
+            value: '<DIV>'
           },
           {
             name: 'Heading 1',
-            value: 'h1'
+            value: '<H1>'
           },
           {
             name: 'Heading 2',
-            value: 'h2'
+            value: '<H2>'
           },
           {
             name: 'Heading 3',
-            value: 'h3'
+            value: '<H3>'
           },
           {
             name: 'Heading 4',
-            value: 'h4'
+            value: '<H4>'
           },
           {
             name: 'Heading 5',
-            value: 'h5'
+            value: '<H5>'
           },
           {
             name: 'Heading 6',
-            value: 'h6'
+            value: '<H6>'
           }
         ];
         scope.formatBlock = scope.formatBlocks[0];
@@ -319,7 +319,7 @@ Requires:
           textarea.html(ngModelController.$viewValue);
         };
         scope.format = function (cmd, arg) {
-          document.execCommand(cmd, false, arg);
+          document.execCommand(cmd, true, arg);
         };
         scope.cmdState = function (cmd) {
           return document.queryCommandState(cmd);
