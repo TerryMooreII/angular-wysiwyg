@@ -73,6 +73,7 @@ To do so you need to create a scope variable in your controller.  This variable 
 	//This also happens to be the default menu options.
 	$scope.yourModel.customMenu = [
             ['bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript'],
+            ['format-block'],
             ['font'],
             ['font-size'],
             ['font-color', 'hilite-color'],
