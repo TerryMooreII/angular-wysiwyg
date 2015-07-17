@@ -44,7 +44,7 @@ angular.module('myapp', ['myApp.controllers', 'myApp.services', 'wysiwyg.module'
 Usage
 ------------
 ```html
-<wysiwyg textarea-id="question" textarea-class="form-control"  textarea-height="80px" textarea-name="textareaQuestion" textarea-required ng-model="yourModel.model" enable-bootstrap-title="true" textarea-menu="{{yourModel.customMenu}}"></wysiwyg>
+<wysiwyg textarea-id="question" textarea-class="form-control"  textarea-height="80px" textarea-name="textareaQuestion" textarea-required ng-model="yourModel.model" enable-bootstrap-title="true" textarea-menu="yourModel.customMenu"></wysiwyg>
 ```
 Options
 -----------
@@ -58,7 +58,7 @@ Option|Description
 **textarea-name**	 |			The name attribute of the editable div 
 **textarea-required**|			True/False HTML/AngularJS required validation
 **enable-bootstrap-title**|		True/False whether or not to show the button hover title styled with bootstrap	
-**textarea-menu**    |          Cusomize the wysiwyg buttons and button groups ***See Below** If nothing is specified then the default buttons and groups will be shows.
+**textarea-menu**    |          Cusomize the wysiwyg buttons and button groups ***See Below** If nothing is specified then the default buttons and groups will be shown.
 **disabled**  |          Disable the buttons and wysiwig area 
 
 Buttons
@@ -73,6 +73,7 @@ To do so you need to create a scope variable in your controller.  This variable 
 	//This also happens to be the default menu options.
 	$scope.yourModel.customMenu = [
             ['bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript'],
+            ['format-block'],
             ['font'],
             ['font-size'],
             ['font-color', 'hilite-color'],
