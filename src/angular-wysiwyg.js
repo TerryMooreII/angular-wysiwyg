@@ -435,7 +435,7 @@ Requires:
 
                 if (obj.text && document.all) {
                     el.innerText = obj.text;
-                } else {
+                } else if (obj.text) {
                     el.textContent = obj.text;
                 }
 
