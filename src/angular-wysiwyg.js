@@ -62,7 +62,7 @@ Requires:
                     textareaName: '@textareaName',
                     textareaClass: '@textareaClass',
                     textareaRequired: '@textareaRequired',
-                    textareaId: '@textareaid',
+                    textareaId: '@textareaId',
                     textareaMenu: '=textareaMenu',
                     textareaCustomMenu: '=textareaCustomMenu',
                     fn: '&',
