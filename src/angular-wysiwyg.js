@@ -4,25 +4,25 @@ Usage: <wysiwyg textarea-id="question" textarea-class="form-control"  textarea-h
         textarea-id             The id to assign to the editable div
         textarea-class          The class(es) to assign to the the editable div
         textarea-height         If not specified in a text-area class then the hight of the editable div (default: 80px)
-        textarea-name           The name attribute of the editable div 
+        textarea-name           The name attribute of the editable div
         textarea-required       HTML/AngularJS required validation
         textarea-menu           Array of Arrays that contain the groups of buttons to show Defualt:Show all button groups
         ng-model                The angular data model
-        enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap  
+        enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap
 
-Requires: 
+Requires:
     Twitter-bootstrap, fontawesome, jquery, angularjs, bootstrap-color-picker (https://github.com/buberdds/angular-bootstrap-colorpicker)
 
 */
 
 /*
-    TODO: 
+    TODO:
         tab support
         custom button fuctions
 
         limit use of scope
         use compile fuction instead of $compile
-        move button elements to js objects and use doc fragments 
+        move button elements to js objects and use doc fragments
 */
 
 (function(angular, undefined) {
@@ -39,7 +39,7 @@ Requires:
         ['ordered-list', 'unordered-list', 'outdent', 'indent'],
         ['left-justify', 'center-justify', 'right-justify'],
         ['code', 'quote', 'paragraph'],
-        ['link', 'image']
+        ['link', 'image', 'video']
     ];
 
     angular.module('wysiwyg.module', ['colorpicker.module'])
@@ -105,25 +105,25 @@ Requires:
 
                 scope.formatBlocks = [{
                     name: 'Heading Blocks',
-                    value: 'div'
+                    value: '<DIV>'
                 }, {
                     name: 'Heading 1',
-                    value: 'h1'
+                    value: '<H1>'
                 }, {
                     name: 'Heading 2',
-                    value: 'h2'
+                    value: '<H2>'
                 }, {
                     name: 'Heading 3',
-                    value: 'h3'
+                    value: '<H3>'
                 }, {
                     name: 'Heading 4',
-                    value: 'h4'
+                    value: '<H4>'
                 }, {
                     name: 'Heading 5',
-                    value: 'h5'
+                    value: '<H5>'
                 }, {
                     name: 'Heading 6',
-                    value: 'h6'
+                    value: '<H6>'
                 }, ];
                 scope.formatBlock = scope.formatBlocks[0];
 
@@ -193,7 +193,10 @@ Requires:
                 function insertTab(html, position) {
                     var begining = html.substr(0, position);
                     var end = html.substr(position);
-                    return begining + '<span style="white-space:pre">    </span>' + end;
+                    var TAB_SPACES = 4;
+                    var space;
+                    for(var i = 0; i < TAB_SPACES; i++) {space += "&nbsp;";}
+                    return begining + '<span style="white-space:pre">'+ space + '</span>' + end;
                 }
 
                 function configureListeners() {
@@ -207,24 +210,24 @@ Requires:
                     textarea.on('input keyup paste mouseup', function() {
                         var html = textarea.html();
 
-                        if (html == '<br>') {
+                        if (html === '<br>') {
                             html = '';
                         }
 
                         ngModelController.$setViewValue(html);
-                    }); 
+                    });
 
                     textarea.on('keydown', function(event){
-                        if (event.keyCode == 9){
+                        if (event.keyCode === 9){
                             var TAB_SPACES = 4;
                             var html = textarea.html();
                             var selection = window.getSelection();
                             var position = selection.anchorOffset;
-                    
+
                             event.preventDefault();
                             // html = insertTab(html, position);
                             // textarea.html(html);
-                            // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);    
+                            // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);
                         }
                     });
 
@@ -235,7 +238,7 @@ Requires:
                             scope.isStrikethrough = scope.cmdState('strikethrough');
                             scope.isItalic = scope.cmdState('italic');
                             scope.isSuperscript = itemIs('SUP'); //scope.cmdState('superscript');
-                            scope.isSubscript = itemIs('SUB'); //scope.cmdState('subscript');    
+                            scope.isSubscript = itemIs('SUB'); //scope.cmdState('subscript');
                             scope.isRightJustified = scope.cmdState('justifyright');
                             scope.isLeftJustified = scope.cmdState('justifyleft');
                             scope.isCenterJustified = scope.cmdState('justifycenter');
@@ -319,7 +322,7 @@ Requires:
                 };
 
                 scope.format = function(cmd, arg) {
-                    document.execCommand(cmd, false, arg);
+                    document.execCommand(cmd, true, arg);
                 };
 
                 scope.cmdState = function(cmd) {
@@ -340,6 +343,41 @@ Requires:
                     var input = prompt('Enter the image URL');
                     if (input && input !== undefined)
                         scope.format('insertimage', input);
+                };
+
+                //Finds the parent of a node with the specified id, or returns null
+                function findParent(node, id){
+                  if(node === null) return null;
+                  if(node.id === id) return node;
+                  return findParent(node.parentNode, id);
+                }
+
+                scope.insertVideo = function() {
+                    var sel = document.getSelection();
+                    if(sel.rangeCount <= 0) { console.log("No range selected"); return;}
+
+                    var input = prompt('Enter the video URL');
+                    if (input && input !== undefined)
+                    {
+                      //Convertion of normal youtube and vimeo linkt into imbed links
+                      var match;
+                      if((match = /youtube\.com\/watch\?v=(.*)/.exec(input)) !== null){
+                        input = 'https://www.youtube.com/embed/' + match[1];
+                      }
+                      else if ((match = /[^player]\/vimeo\.com\/(.*)/.exec(input)) !== null) {
+                        input = 'https://player.vimeo.com/video/' + match[1];
+                      }
+
+                      var videoElement = '<iframe src=' + encodeURI(input) + '></iframe>';
+
+                      var range = sel.getRangeAt(0);
+
+                      //Prevent user from addin videos outside of the element
+                      if(findParent(range.startContainer, scope.textareaId) === null) return;
+
+                      var nnode = range.createContextualFragment(videoElement);
+                      range.insertNode(nnode);
+                    }
                 };
 
                 scope.setFont = function() {
@@ -387,7 +425,6 @@ Requires:
             };
 
             var createMenu = function(menu) {
-
                 angular.extend(ELEMENTS, custom);
 
                 //Get the default menu or the passed in menu
@@ -400,9 +437,9 @@ Requires:
                 //create div to add everything to.
                 var startDiv = document.createElement('div');
                 var el;
-
                 for (var i = 0; i < menu.length; i++) {
                     var menuGroup = create(getMenuGroup());
+                    //console.log(menuGroup);
 
                     for (var j = 0; j < menu[i].length; j++) {
                         //link has two functions link and unlink
@@ -435,7 +472,7 @@ Requires:
 
                 if (obj.text && document.all) {
                     el.innerText = obj.text;
-                } else if (obj.text) {
+                } else if(obj.text){
                     el.textContent = obj.text;
                 }
 
@@ -833,6 +870,24 @@ Requires:
                 data: [{
                     tag: 'i',
                     classes: 'fa fa-picture-o'
+                }]
+            },
+            'video': {
+                tag: 'button',
+                classes: 'btn btn-default',
+                attributes: [{
+                    name: 'title',
+                    value: 'Video'
+                }, {
+                    name: 'ng-click',
+                    value: 'insertVideo()'
+                }, {
+                    name: 'type',
+                    value: 'button'
+                }],
+                data: [{
+                    tag: 'i',
+                    classes: 'fa fa-youtube-play'
                 }]
             },
             'font-color': {

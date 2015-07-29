@@ -1,9 +1,9 @@
-var app = angular.module('app', ['colorpicker.module', 'wysiwyg.module'])
+var app = angular.module('app', ['colorpicker.module', 'wysiwyg.module']);
 
 app.controller('MyCtrl', function($scope) {
     $scope.data = {
         text: "hello"
-    }
+    };
     $scope.disabled = false;
     $scope.menu = [
         ['bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript'],
@@ -15,7 +15,7 @@ app.controller('MyCtrl', function($scope) {
         ['ordered-list', 'unordered-list', 'outdent', 'indent'],
         ['left-justify', 'center-justify', 'right-justify'],
         ['code', 'quote', 'paragraph'],
-        ['link', 'image'],
+        ['link', 'image', 'video'],
         ['css-class']
     ];
 
@@ -23,5 +23,5 @@ app.controller('MyCtrl', function($scope) {
 
     $scope.setDisabled = function() {
         $scope.disabled = !$scope.disabled;
-    }
-})
+    };
+});
