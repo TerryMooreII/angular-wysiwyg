@@ -67,6 +67,7 @@ Requires:
                     textareaCustomMenu: '=textareaCustomMenu',
                     fn: '&',
                     disabled: '=?disabled',
+                    textareaCustomFunctions: '=textareaCustomFunctions'
                 },
                 replace: true,
                 require: 'ngModel',
@@ -361,7 +362,14 @@ Requires:
                 scope.setHiliteColor = function() {
                     scope.format('hiliteColor', scope.hiliteColor);
                 };
-
+                scope.textareaCustomFunctions = scope.textareaCustomFunctions || {};
+                for (var i in scope.textareaCustomFunctions) {
+                    if (scope[i] == undefined) {
+                        scope[i] = scope.textareaCustomFunctions[i];
+                    } else {
+                        console.log('Cannot set custom function `' + i + '`. Already exists function or property');
+                    }
+                }
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             }
