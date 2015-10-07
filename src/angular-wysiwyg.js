@@ -83,25 +83,43 @@ Requires:
 
                 scope.fontSizes = [{
                     value: '1',
-                    size: '10px'
+                    size: '8px'
                 }, {
                     value: '2',
-                    size: '13px'
+                    size: '9px'
                 }, {
                     value: '3',
-                    size: '16px'
+                    size: '10px'
                 }, {
                     value: '4',
-                    size: '18px'
+                    size: '11px'
                 }, {
                     value: '5',
-                    size: '24px'
+                    size: '12px'
                 }, {
                     value: '6',
-                    size: '32px'
+                    size: '13px'
                 }, {
                     value: '7',
+                    size: '14px'
+                }, {
+                    value: '8',
+                    size: '16px'
+                }, {
+                    value: '9',
+                    size: '18px'
+                }, {
+                    value: '10',
+                    size: '24px'
+                }, {
+                    value: '11',
+                    size: '32px'
+                }, {
+                    value: '12',
                     size: '48px'
+                }, {
+                    value: '13',
+                    size: '62px'
                 }];
 
                 scope.formatBlocks = [{
