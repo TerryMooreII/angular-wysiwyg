@@ -155,9 +155,13 @@ Requires:
                 function init() {
                     applyDefaultsFromStyle();
                     compileMenu();
-                    configureDisabledWatch();
+                    configureWatchers();
                     configureBootstrapTitle();
                     configureListeners();
+                }
+
+                function updateSelectedColorButton(){
+                    element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
                 }
 
                 function applyDefaultsFromStyle() {
@@ -184,7 +188,7 @@ Requires:
                         }
                         if (styles.color != null) {
                             scope.fontColor = styles.color;
-                            element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
+                            updateSelectedColorButton();
                         }
                     });
                 }
@@ -196,7 +200,7 @@ Requires:
                     $compile(menuDiv)(scope);
                 }
 
-                function configureDisabledWatch() {
+                function configureWatchers() {
                     scope.$watch('disabled', function (newValue) {
                         angular.element('div.wysiwyg-menu').find('button').each(function () {
                             angular.element(this).attr('disabled', newValue);
@@ -205,6 +209,8 @@ Requires:
                             angular.element(this).attr('disabled', newValue);
                         });
                     });
+
+                    scope.$watch('fontColor', updateSelectedColorButton);
                 }
 
                 function configureBootstrapTitle() {
@@ -295,7 +301,7 @@ Requires:
                             element.find('button.wysiwyg-hiliteColor').css('background-color', scope.hiliteColor);
 
                             scope.fontColor = scope.cmdValue('forecolor');
-                            element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
+                            updateSelectedColorButton();
 
                             scope.isLink = itemIs('A');
 
