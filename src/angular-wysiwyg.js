@@ -129,10 +129,6 @@ Requires:
 
                 scope.fontSize = scope.fontSizes[1];
 
-                if (angular.isArray(scope.cssClasses)) {
-                    scope.cssClasses.unshift('css');
-                    scope.cssClass = scope.cssClasses[0];
-                }
 
                 scope.fonts = [
                     'Georgia',
@@ -457,7 +453,7 @@ Requires:
                 } else if (obj.text) {
                     el = document.createElement('span');
                 } else {
-                    console.log('cannot create this element.');
+                    console.log('cannot create', obj, 'element.');
                     el = document.createElement('span');
                     return el;
                 }
