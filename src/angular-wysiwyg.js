@@ -39,7 +39,8 @@ Requires:
         ['ordered-list', 'unordered-list', 'outdent', 'indent'],
         ['left-justify', 'center-justify', 'right-justify'],
         ['code', 'quote', 'paragraph'],
-        ['link', 'image']
+        ['link', 'image'],
+        ['toggle-mode']
     ];
 
     angular.module('wysiwyg.module', ['colorpicker.module'])
@@ -54,6 +55,7 @@ Requires:
                 '</style>' +
                 '<div class="wysiwyg-menu"></div>' +
                 '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
+                '<div ng-show="!htmlMode" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" name="{{textareaName}}" ng-bind="value"></div>' +
                 '</div>',
                 restrict: 'E',
                 scope: {
@@ -77,7 +79,8 @@ Requires:
 
             function link(scope, element, attrs, ngModelController) {
 
-                var textarea = element.find('div.wysiwyg-textarea');
+                var textarea = element.find('div.wysiwyg-textarea'),
+                    textareaRaw = textarea.next();
 
                 scope.isLink = false;
 
@@ -150,6 +153,8 @@ Requires:
                 ].sort();
 
                 scope.font = scope.fonts[6];
+
+                scope.htmlMode = true;
 
                 init();
 
@@ -359,6 +364,16 @@ Requires:
 
                 scope.cmdValue = function (cmd) {
                     return document.queryCommandValue(cmd);
+                };
+
+                scope.toggleHtml = function() {
+                    scope.htmlMode = !scope.htmlMode;
+                    if(scope.htmlMode){
+                        var rawValue = $('<div/>').html(textareaRaw.html()).text();
+                        textarea.html(rawValue);
+                        textarea.trigger("click");
+                        textarea.trigger("input");
+                    }
                 };
 
                 scope.createLink = function () {
@@ -1012,6 +1027,28 @@ Requires:
                 data: [{
                     tag: 'i',
                     classes: 'fa fa-unlink'
+                }]
+            },
+            'toggle-mode': {
+                tag: 'button',
+                classes: 'btn btn-default',
+                attributes: [
+                    {
+                        name: 'title',
+                        value: 'Toggle HTML mode'
+                    },
+                    {
+                        name: 'ng-click',
+                        value: 'toggleHtml()'
+                    },
+                    {
+                        name: 'type',
+                        value: 'button'
+                    }
+                ],
+                data: [{
+                    tag: 'i',
+                    classes: 'fa fa-edit'
                 }]
             }
         });
