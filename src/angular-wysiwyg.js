@@ -43,7 +43,7 @@ Requires:
     ];
 
     angular.module('wysiwyg.module', ['colorpicker.module'])
-        .directive('wysiwyg', ['$timeout', 'wysiwgGui', '$compile', function ($timeout, wysiwgGui, $compile) {
+        .directive('wysiwyg', ['$timeout', 'wysiwgGui', '$compile', '$window', function ($timeout, wysiwgGui, $compile, $window) {
             return {
                 template: '<div>' +
                 '<style>' +
@@ -167,9 +167,8 @@ Requires:
 
                 function applyDefaultsFromStyle() {
                     $timeout(function () {
-                        //Find rendered element for css style computation, because getComputedStyle(element[0]).fontFamily -> 'Helvetica Neue', Helvetica, Arial, sans-serif while getComputedStyle(angular.element("#" + scope.textareaId)[0]).fontFamily -> 'Lucida Console'
-                        var textArea = angular.element("#" + scope.textareaId)[0];
-                        var styles = getComputedStyle(textArea);
+                        var textArea = element.find(".wysiwyg-textarea")[0];
+                        var styles = $window.getComputedStyle(textArea, null);
                         if (styles.fontFamily != null) {
                             var fontName = styles.fontFamily.split(",")[0];
                             //Remove "'" symbols from style name
@@ -395,7 +394,7 @@ Requires:
                 };
                 scope.textareaCustomFunctions = scope.textareaCustomFunctions || {};
                 for (var i in scope.textareaCustomFunctions) {
-                    if (scope[i] == undefined) {
+                    if (scope[i] == null) {
                         scope[i] = scope.textareaCustomFunctions[i];
                     } else {
                         console.log('Cannot set custom function `' + i + '`. Already exists function or property');
