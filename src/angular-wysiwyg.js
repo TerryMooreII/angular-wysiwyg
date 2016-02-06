@@ -54,7 +54,7 @@ Requires:
                 '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
                 '</style>' +
                 '<div class="wysiwyg-menu"></div>' +
-                '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
+                '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value" ng-show="htmlMode"></div>' +
                 '<div ng-show="!htmlMode" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" name="{{textareaName}}" ng-bind="value"></div>' +
                 '</div>',
                 restrict: 'E',
@@ -419,7 +419,7 @@ Requires:
                 scope.format('styleWithCSS', true);
             }
         }])
-        .factory('wysiwgGui', function (wysiwgGuiElements) {
+        .factory('wysiwgGui', [ 'wysiwgGuiElements', function (wysiwgGuiElements) {
 
             var ELEMENTS = wysiwgGuiElements;
             var custom = {};
@@ -523,7 +523,7 @@ Requires:
                 setCustomElements: setCustomElements
             };
 
-        })
+        }])
         .value('wysiwgGuiElements', {
             'bold': {
                 tag: 'button',
