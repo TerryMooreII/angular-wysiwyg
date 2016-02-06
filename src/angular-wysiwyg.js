@@ -44,7 +44,7 @@ Requires:
     ];
 
     angular.module('wysiwyg.module', ['colorpicker.module'])
-        .directive('wysiwyg', ['$timeout', 'wysiwgGui', '$compile', '$window', function ($timeout, wysiwgGui, $compile, $window) {
+        .directive('wysiwyg', ['$timeout', 'wysiwgGui', '$compile', '$window', '$http', function ($timeout, wysiwgGui, $compile, $window, $http) {
             return {
                 template: '<div>' +
                 '<style>' +
@@ -54,6 +54,23 @@ Requires:
                 '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
                 '</style>' +
                 '<div class="wysiwyg-menu"></div>' +
+                '<div class="wysiwyg-image-uploader hidden">' +
+                '   <h4>Insert Image</h4>' +
+                '   <ul class="nav nav-tabs" style="margin-top:10px;margin-bottom:10px">' +
+                '       <li role="presentation" ng-class="{active:imageView === \'file\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'file\')">File</a></li>' +
+                '       <li role="presentation" class="disabled"><a href="javascript:void(0)" ng-click="changeImageView(\'url\')">URL</a></li>' +
+                '       <li role="presentation" class="disabled"><a href="javascript:void(0)" ng-click="changeImageView(\'flickr\')">Flickr</a></li>' +
+                '   </ul>' +
+                '   <div ng-if="imageView === \'file\'">' +
+                '       <ul class="list-unstyled">' +
+                '           <li ng-repeat="file in files.user">' +
+                '               <a href="javascript:void(0)" ng-click="selectImage(file)">' +
+                '                   <img src="{{ file.thumbnail_url }}" /> {{ file.display_name }}' +
+                '               </a>' +
+                '           </li>' +
+                '       </ul>' +    
+                '   </div>' +
+                '</div>' +    
                 '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value" ng-show="htmlMode"></div>' +
                 '<div ng-show="!htmlMode" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" name="{{textareaName}}" ng-bind="value"></div>' +
                 '</div>',
@@ -156,6 +173,19 @@ Requires:
 
                 scope.htmlMode = true;
 
+                scope.files = { user: [], course: [] };
+
+                scope.imageView = 'file';
+
+                scope.changeImageView = function(type) {
+                    scope.imageView = type;
+                };
+
+                scope.selectImage = function(image) {
+                    scope.format('insertimage', image.url);
+                    element.find('.wysiwyg-image-uploader').addClass('hidden');
+                };
+
                 init();
 
                 function init() {
@@ -164,6 +194,15 @@ Requires:
                     configureWatchers();
                     configureBootstrapTitle();
                     configureListeners();
+                    getFiles();
+                }
+
+                function getFiles() {
+                    $http.get('/api/v1/users/self/files')
+                        .then(function(resp) {
+                            scope.files.user = resp.data;
+                        })
+                    ;
                 }
 
                 function updateSelectedColorButton(){
@@ -382,10 +421,15 @@ Requires:
                         scope.format('createlink', input);
                 };
 
+                // scope.insertImage = function () {
+                //     var input = prompt('Enter the image URL');
+                //     if (input && input !== undefined)
+                //         scope.format('insertimage', input);
+                // };
+
                 scope.insertImage = function () {
-                    var input = prompt('Enter the image URL');
-                    if (input && input !== undefined)
-                        scope.format('insertimage', input);
+                    var uploader = element.find('.wysiwyg-image-uploader');
+                    uploader.toggleClass('hidden');
                 };
 
                 scope.setFont = function () {
