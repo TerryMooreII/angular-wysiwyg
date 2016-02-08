@@ -59,7 +59,7 @@ Requires:
                     '   <ul class="nav nav-tabs" style="margin-top:10px;margin-bottom:10px">' +
                     '       <li role="presentation" ng-class="{active:imageView === \'file\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'file\')">File</a></li>' +
                     '       <li role="presentation" ng-class="{active:imageView === \'url\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'url\')">URL</a></li>' +
-                    '       <li role="presentation" class="disabled"><a href="javascript:void(0)" ng-click="changeImageView(\'flickr\')">Flickr</a></li>' +
+                    '       <li role="presentation" ng-class="{active:imageView === \'flickr\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'flickr\')">Flickr</a></li>' +
                     '   </ul>' +
                     '   <div ng-if="imageView === \'file\'">' +
                     '       <ul class="list-unstyled">' +
@@ -78,6 +78,19 @@ Requires:
                     '       <div class="form-group">' +
                     '           <button class="btn btn-primary capitalized" ng-click="selectImage(imageUrl)">Add Image</button>' +
                     '       </div>' +
+                    '   </div>' +
+                    '   <div ng-if="imageView === \'flickr\'">' +
+                    '       <div class="input-group">' +
+                    '           <input class="form-control" ng-model="fQuery" placeholder="Find a photo on Flickr.com" aria-describedby="basic-addon2" />' +
+                    '           <span class="input-group-addon" id="basic-addon2" ng-click="startFlickrSearch(fQuery)"><i class="fa fa-search" /></span>' +
+                    '       </div>' +
+                    '       <ul class="list-unstyled">' +
+                    '           <li style="display:inline-block;margin:5px;" ng-repeat="photo in flickrPhotos">' +
+                    '               <a href="javascript:void(0)" ng-click="selectImage(flickrUrl(photo))">' +
+                    '                   <img ng-src="{{ flickrUrl(photo) }}" style="border-radius:7px;max-height:100px;max-width:100px" />' +
+                    '               </a>' +
+                    '           </li>' +
+                    '       </ul>' +    
                     '   </div>' +
                     '   <h4>Attributes</h4>'+
                     '   <form>'+
@@ -212,6 +225,13 @@ Requires:
                     scope.imageView = type;
                 };
 
+                var flickr;
+                scope.flickrPhotos = [{},{},{}];
+
+                scope.flickrUrl = function(photo) {
+                    return ['http://c2.staticflickr.com',photo.farm,photo.server,photo.id+'_'+photo.secret+'_z.jpg'].join('/');
+                };
+                
                 scope.selectImage = function(url) {
                     if(!url) { return false; }
                     scope.format('insertimage', url);
@@ -226,6 +246,17 @@ Requires:
                     if (scope.imageAlt) { img.attr("alt", scope.imageAlt); }
                 }
 
+                scope.startFlickrSearch = function(x) {
+                    flickr.photos.search({
+                        text: x
+                    }, function(err, result) {
+                        if(err) { throw new Error(err); }
+                        scope.flickrPhotos = result.photos.photo;
+                        scope.$apply();
+                        window.console.log(scope.flickrPhotos);
+                    });
+                };
+
                 init();
 
                 function init() {
@@ -235,6 +266,13 @@ Requires:
                     configureBootstrapTitle();
                     configureListeners();
                     getFiles();
+                    setupFlickr();
+                }
+
+                function setupFlickr() {
+                    flickr = new Flickr({
+                        api_key: "10e1de182b3a6654302eb521c898de0e"
+                    });
                 }
 
                 function getFiles() {
