@@ -63,9 +63,9 @@ Requires:
                 '   </ul>' +
                 '   <div ng-if="imageView === \'file\'">' +
                 '       <ul class="list-unstyled">' +
-                '           <li ng-repeat="file in files.user">' +
+                '           <li style="display:inline-block;margin:5px;" ng-repeat="file in files.user">' +
                 '               <a href="javascript:void(0)" ng-click="selectImage(file)">' +
-                '                   <img src="{{ file.thumbnail_url }}" /> {{ file.display_name }}' +
+                '                   <img src="{{ file.thumbnail_url }}" style="border-radius:7px;max-height:100px;max-width:100px" />' +
                 '               </a>' +
                 '           </li>' +
                 '       </ul>' +    
