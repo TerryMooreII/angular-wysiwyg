@@ -58,17 +58,26 @@ Requires:
                     '   <h4>Insert Image</h4>' +
                     '   <ul class="nav nav-tabs" style="margin-top:10px;margin-bottom:10px">' +
                     '       <li role="presentation" ng-class="{active:imageView === \'file\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'file\')">File</a></li>' +
-                    '       <li role="presentation" class="disabled"><a href="javascript:void(0)" ng-click="changeImageView(\'url\')">URL</a></li>' +
+                    '       <li role="presentation" ng-class="{active:imageView === \'url\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'url\')">URL</a></li>' +
                     '       <li role="presentation" class="disabled"><a href="javascript:void(0)" ng-click="changeImageView(\'flickr\')">Flickr</a></li>' +
                     '   </ul>' +
                     '   <div ng-if="imageView === \'file\'">' +
                     '       <ul class="list-unstyled">' +
                     '           <li style="display:inline-block;margin:5px;" ng-repeat="file in files.user">' +
-                    '               <a href="javascript:void(0)" ng-click="selectImage(file)">' +
+                    '               <a href="javascript:void(0)" ng-click="selectImage(file.url)">' +
                     '                   <img src="{{ file.thumbnail_url }}" style="border-radius:7px;max-height:100px;max-width:100px" />' +
                     '               </a>' +
                     '           </li>' +
                     '       </ul>' +    
+                    '   </div>' +
+                    '   <div ng-if="imageView === \'url\'">' +
+                    '       <div class="form-group">' +
+                    '           <label>Image URL</label>' +
+                    '           <input class="form-control" ng-model="imageUrl" />' +
+                    '       </div>' +
+                    '       <div class="form-group">' +
+                    '           <button class="btn btn-primary capitalized" ng-click="selectImage(imageUrl)">Add Image</button>' +
+                    '       </div>' +
                     '   </div>' +
                     '   <h4>Attributes</h4>'+
                     '   <form>'+
@@ -195,6 +204,7 @@ Requires:
                 scope.imageAlt = '';
                 scope.imageWidth = '';
                 scope.imageHeight = '';
+                scope.imageUrl = '';
 
                 scope.imageView = 'file';
 
@@ -202,9 +212,10 @@ Requires:
                     scope.imageView = type;
                 };
 
-                scope.selectImage = function(image) {
-                    scope.format('insertimage', image.url);
-                    applyImageParams(image.url);
+                scope.selectImage = function(url) {
+                    if(!url) { return false; }
+                    scope.format('insertimage', url);
+                    applyImageParams(url);
                     element.find('.wysiwyg-image-uploader').addClass('hidden');
                 };
 
