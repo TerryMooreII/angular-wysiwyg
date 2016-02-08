@@ -47,33 +47,50 @@ Requires:
         .directive('wysiwyg', ['$timeout', 'wysiwgGui', '$compile', '$window', '$http', function ($timeout, wysiwgGui, $compile, $window, $http) {
             return {
                 template: '<div>' +
-                '<style>' +
-                '   .wysiwyg-textarea[contentEditable="false"] { background-color:#eee}' +
-                '   .wysiwyg-btn-group-margin { margin-right:5px; }' +
-                '   .wysiwyg-select { height:30px;margin-bottom:1px;}' +
-                '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
-                '</style>' +
-                '<div class="wysiwyg-menu"></div>' +
-                '<div class="wysiwyg-image-uploader hidden">' +
-                '   <h4>Insert Image</h4>' +
-                '   <ul class="nav nav-tabs" style="margin-top:10px;margin-bottom:10px">' +
-                '       <li role="presentation" ng-class="{active:imageView === \'file\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'file\')">File</a></li>' +
-                '       <li role="presentation" class="disabled"><a href="javascript:void(0)" ng-click="changeImageView(\'url\')">URL</a></li>' +
-                '       <li role="presentation" class="disabled"><a href="javascript:void(0)" ng-click="changeImageView(\'flickr\')">Flickr</a></li>' +
-                '   </ul>' +
-                '   <div ng-if="imageView === \'file\'">' +
-                '       <ul class="list-unstyled">' +
-                '           <li style="display:inline-block;margin:5px;" ng-repeat="file in files.user">' +
-                '               <a href="javascript:void(0)" ng-click="selectImage(file)">' +
-                '                   <img src="{{ file.thumbnail_url }}" style="border-radius:7px;max-height:100px;max-width:100px" />' +
-                '               </a>' +
-                '           </li>' +
-                '       </ul>' +    
-                '   </div>' +
-                '</div>' +    
-                '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value" ng-show="htmlMode"></div>' +
-                '<div ng-show="!htmlMode" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" name="{{textareaName}}" ng-bind="value"></div>' +
-                '</div>',
+                    '<style>' +
+                    '   .wysiwyg-textarea[contentEditable="false"] { background-color:#eee}' +
+                    '   .wysiwyg-btn-group-margin { margin-right:5px; }' +
+                    '   .wysiwyg-select { height:30px;margin-bottom:1px;}' +
+                    '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
+                    '</style>' +
+                    '<div class="wysiwyg-menu"></div>' +
+                    '<div class="wysiwyg-image-uploader hidden">' +
+                    '   <h4>Insert Image</h4>' +
+                    '   <ul class="nav nav-tabs" style="margin-top:10px;margin-bottom:10px">' +
+                    '       <li role="presentation" ng-class="{active:imageView === \'file\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'file\')">File</a></li>' +
+                    '       <li role="presentation" class="disabled"><a href="javascript:void(0)" ng-click="changeImageView(\'url\')">URL</a></li>' +
+                    '       <li role="presentation" class="disabled"><a href="javascript:void(0)" ng-click="changeImageView(\'flickr\')">Flickr</a></li>' +
+                    '   </ul>' +
+                    '   <div ng-if="imageView === \'file\'">' +
+                    '       <ul class="list-unstyled">' +
+                    '           <li style="display:inline-block;margin:5px;" ng-repeat="file in files.user">' +
+                    '               <a href="javascript:void(0)" ng-click="selectImage(file)">' +
+                    '                   <img src="{{ file.thumbnail_url }}" style="border-radius:7px;max-height:100px;max-width:100px" />' +
+                    '               </a>' +
+                    '           </li>' +
+                    '       </ul>' +    
+                    '   </div>' +
+                    '   <h4>Attributes</h4>'+
+                    '   <form>'+
+                    '       <div class="form-group">'+
+                    '           <label>Alt text</label>'+
+                    '           <input class="form-control" ng-model="imageAlt" />'+
+                    '       </div>'+
+                    '   </form>'+
+                    '   <form class="form-inline" style="margin-bottom:20px">'+
+                    '       <div class="form-group">'+
+                    '           <label>Width</label>'+
+                    '           <input class="form-control" ng-model="imageWidth" />'+
+                    '       </div>'+
+                    '       <div class="form-group">'+
+                    '           <label>Height</label>'+
+                    '           <input class="form-control" ng-model="imageHeight" />'+
+                    '       </div>'+
+                    '   </form>'+
+                    '</div>' +    
+                    '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value" ng-show="htmlMode"></div>' +
+                    '<div ng-show="!htmlMode" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" name="{{textareaName}}" ng-bind="value"></div>' +
+                    '</div>',
                 restrict: 'E',
                 scope: {
                     value: '=ngModel',
@@ -175,6 +192,10 @@ Requires:
 
                 scope.files = { user: [], course: [] };
 
+                scope.imageAlt = '';
+                scope.imageWidth = '';
+                scope.imageHeight = '';
+
                 scope.imageView = 'file';
 
                 scope.changeImageView = function(type) {
@@ -183,8 +204,16 @@ Requires:
 
                 scope.selectImage = function(image) {
                     scope.format('insertimage', image.url);
+                    applyImageParams(image.url);
                     element.find('.wysiwyg-image-uploader').addClass('hidden');
                 };
+
+                function applyImageParams(url) {
+                    var img = textarea.find("img[src='"+url+"']");
+                    if (scope.imageWidth) { img.attr("width", scope.imageWidth); }
+                    if (scope.imageHeight) { img.attr("height", scope.imageHeight); }
+                    if (scope.imageAlt) { img.attr("alt", scope.imageAlt); }
+                }
 
                 init();
 
