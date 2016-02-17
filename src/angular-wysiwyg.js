@@ -4,28 +4,28 @@ Usage: <wysiwyg textarea-id="question" textarea-class="form-control"  textarea-h
         textarea-id             The id to assign to the editable div
         textarea-class          The class(es) to assign to the the editable div
         textarea-height         If not specified in a text-area class then the hight of the editable div (default: 80px)
-        textarea-name           The name attribute of the editable div 
+        textarea-name           The name attribute of the editable div
         textarea-required       HTML/AngularJS required validation
         textarea-menu           Array of Arrays that contain the groups of buttons to show Defualt:Show all button groups
         ng-model                The angular data model
-        enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap  
+        enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap
 
-Requires: 
+Requires:
     Twitter-bootstrap, fontawesome, jquery, angularjs, bootstrap-color-picker (https://github.com/buberdds/angular-bootstrap-colorpicker)
 
 */
 
 /*
-    TODO: 
+    TODO:
         tab support
         custom button fuctions
 
         limit use of scope
         use compile fuction instead of $compile
-        move button elements to js objects and use doc fragments 
+        move button elements to js objects and use doc fragments
 */
 
-(function(angular, undefined) {
+(function (angular, undefined) {
 
     'use strict';
 
@@ -39,11 +39,12 @@ Requires:
         ['ordered-list', 'unordered-list', 'outdent', 'indent'],
         ['left-justify', 'center-justify', 'right-justify'],
         ['code', 'quote', 'paragraph'],
-        ['link', 'image']
+        ['link', 'image'],
+        ['toggle-mode']
     ];
 
     angular.module('wysiwyg.module', ['colorpicker.module'])
-        .directive('wysiwyg', function($timeout, wysiwgGui, $compile) {
+        .directive('wysiwyg', ['$timeout', 'wysiwgGui', '$compile', '$window', '$http', function ($timeout, wysiwgGui, $compile, $window, $http) {
             return {
                 template: '<div>' +
                     '<style>' +
@@ -53,7 +54,64 @@ Requires:
                     '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
                     '</style>' +
                     '<div class="wysiwyg-menu"></div>' +
-                    '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
+                    '<div class="wysiwyg-image-uploader hidden">' +
+                    '   <h4>Insert Image</h4>' +
+                    '   <ul class="nav nav-tabs" style="margin-top:10px;margin-bottom:10px">' +
+                    '       <li role="presentation" ng-class="{active:imageView === \'file\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'file\')">File</a></li>' +
+                    '       <li role="presentation" ng-class="{active:imageView === \'url\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'url\')">URL</a></li>' +
+                    '       <li role="presentation" ng-class="{active:imageView === \'flickr\'}"><a href="javascript:void(0)" ng-click="changeImageView(\'flickr\')">Flickr</a></li>' +
+                    '   </ul>' +
+                    '   <div ng-if="imageView === \'file\'">' +
+                    '       <ul class="list-unstyled">' +
+                    '           <li style="display:inline-block;margin:5px;" ng-repeat="file in files.user">' +
+                    '               <a href="javascript:void(0)" ng-click="selectImage(file.url)">' +
+                    '                   <img src="{{ file.thumbnail_url }}" style="border-radius:7px;max-height:100px;max-width:100px" />' +
+                    '               </a>' +
+                    '           </li>' +
+                    '       </ul>' +    
+                    '   </div>' +
+                    '   <div ng-if="imageView === \'url\'">' +
+                    '       <div class="form-group">' +
+                    '           <label>Image URL</label>' +
+                    '           <input class="form-control" ng-model="imageUrl" />' +
+                    '       </div>' +
+                    '       <div class="form-group">' +
+                    '           <button class="btn btn-primary capitalized" ng-click="selectImage(imageUrl)">Add Image</button>' +
+                    '       </div>' +
+                    '   </div>' +
+                    '   <div ng-if="imageView === \'flickr\'">' +
+                    '       <div class="input-group">' +
+                    '           <input class="form-control" ng-model="fQuery" placeholder="Find a photo on Flickr.com" aria-describedby="basic-addon2" />' +
+                    '           <span class="input-group-addon" id="basic-addon2" ng-click="startFlickrSearch(fQuery)"><i class="fa fa-search" /></span>' +
+                    '       </div>' +
+                    '       <ul class="list-unstyled">' +
+                    '           <li style="display:inline-block;margin:5px;" ng-repeat="photo in flickrPhotos">' +
+                    '               <a href="javascript:void(0)" ng-click="selectImage(flickrUrl(photo))">' +
+                    '                   <img ng-src="{{ flickrUrl(photo) }}" style="border-radius:7px;max-height:100px;max-width:100px" />' +
+                    '               </a>' +
+                    '           </li>' +
+                    '       </ul>' +    
+                    '   </div>' +
+                    '   <h4>Attributes</h4>'+
+                    '   <form>'+
+                    '       <div class="form-group">'+
+                    '           <label>Alt text</label>'+
+                    '           <input class="form-control" ng-model="imageAlt" />'+
+                    '       </div>'+
+                    '   </form>'+
+                    '   <form class="form-inline" style="margin-bottom:20px">'+
+                    '       <div class="form-group">'+
+                    '           <label>Width</label>'+
+                    '           <input class="form-control" ng-model="imageWidth" />'+
+                    '       </div>'+
+                    '       <div class="form-group">'+
+                    '           <label>Height</label>'+
+                    '           <input class="form-control" ng-model="imageHeight" />'+
+                    '       </div>'+
+                    '   </form>'+
+                    '</div>' +    
+                    '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value" ng-show="htmlMode"></div>' +
+                    '<div ng-show="!htmlMode" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" name="{{textareaName}}" ng-bind="value"></div>' +
                     '</div>',
                 restrict: 'E',
                 scope: {
@@ -67,6 +125,7 @@ Requires:
                     textareaCustomMenu: '=textareaCustomMenu',
                     fn: '&',
                     disabled: '=?disabled',
+                    textareaCustomFunctions: '=textareaCustomFunctions'
                 },
                 replace: true,
                 require: 'ngModel',
@@ -76,7 +135,8 @@ Requires:
 
             function link(scope, element, attrs, ngModelController) {
 
-                var textarea = element.find('div.wysiwyg-textarea');
+                var textarea = element.find('div.wysiwyg-textarea'),
+                    textareaRaw = textarea.next();
 
                 scope.isLink = false;
 
@@ -124,15 +184,11 @@ Requires:
                 }, {
                     name: 'Heading 6',
                     value: 'h6'
-                }, ];
+                },];
                 scope.formatBlock = scope.formatBlocks[0];
 
                 scope.fontSize = scope.fontSizes[1];
 
-                if (angular.isArray(scope.cssClasses)) {
-                    scope.cssClasses.unshift('css');
-                    scope.cssClass = scope.cssClasses[0];
-                }
 
                 scope.fonts = [
                     'Georgia',
@@ -154,14 +210,109 @@ Requires:
 
                 scope.font = scope.fonts[6];
 
+                scope.htmlMode = true;
+
+                scope.files = { user: [], course: [] };
+
+                scope.imageAlt = '';
+                scope.imageWidth = '';
+                scope.imageHeight = '';
+                scope.imageUrl = '';
+
+                scope.imageView = 'file';
+
+                scope.changeImageView = function(type) {
+                    scope.imageView = type;
+                };
+
+                var flickr;
+                scope.flickrPhotos = [{},{},{}];
+
+                scope.flickrUrl = function(photo) {
+                    return ['http://c2.staticflickr.com',photo.farm,photo.server,photo.id+'_'+photo.secret+'_z.jpg'].join('/');
+                };
+                
+                scope.selectImage = function(url) {
+                    if(!url) { return false; }
+                    scope.format('insertimage', url);
+                    applyImageParams(url);
+                    element.find('.wysiwyg-image-uploader').addClass('hidden');
+                };
+
+                function applyImageParams(url) {
+                    var img = textarea.find("img[src='"+url+"']");
+                    if (scope.imageWidth) { img.attr("width", scope.imageWidth); }
+                    if (scope.imageHeight) { img.attr("height", scope.imageHeight); }
+                    if (scope.imageAlt) { img.attr("alt", scope.imageAlt); }
+                }
+
+                scope.startFlickrSearch = function(x) {
+                    flickr.photos.search({
+                        text: x
+                    }, function(err, result) {
+                        if(err) { throw new Error(err); }
+                        scope.flickrPhotos = result.photos.photo;
+                        scope.$apply();
+                        window.console.log(scope.flickrPhotos);
+                    });
+                };
+
                 init();
 
                 function init() {
-
+                    applyDefaultsFromStyle();
                     compileMenu();
-                    configureDisabledWatch();
+                    configureWatchers();
                     configureBootstrapTitle();
                     configureListeners();
+                    getFiles();
+                    setupFlickr();
+                }
+
+                function setupFlickr() {
+                    flickr = new Flickr({
+                        api_key: "10e1de182b3a6654302eb521c898de0e"
+                    });
+                }
+
+                function getFiles() {
+                    $http.get('/api/v1/users/self/files')
+                        .then(function(resp) {
+                            scope.files.user = resp.data;
+                        })
+                    ;
+                }
+
+                function updateSelectedColorButton(){
+                    element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
+                }
+
+                function applyDefaultsFromStyle() {
+                    $timeout(function () {
+                        var textArea = element.find(".wysiwyg-textarea")[0];
+                        var styles = $window.getComputedStyle(textArea, null);
+                        if (styles.fontFamily != null) {
+                            var fontName = styles.fontFamily.split(",")[0];
+                            //Remove "'" symbols from style name
+                            fontName = fontName.slice(1, -1);
+                            if (scope.fonts.indexOf(fontName) !== -1) {
+                                scope.font = fontName;
+                            }
+                        }
+                        if (styles.fontSize != null) {
+                            for (var i = 0; i < scope.fontSizes.length; i++) {
+                                var fontSizeDescriptor = scope.fontSizes[i];
+                                if (fontSizeDescriptor.size == styles.fontSize) {
+                                    scope.fontSize = fontSizeDescriptor;
+                                    break;
+                                }
+                            }
+                        }
+                        if (styles.color != null) {
+                            scope.fontColor = styles.color;
+                            updateSelectedColorButton();
+                        }
+                    });
                 }
 
                 function compileMenu() {
@@ -171,15 +322,17 @@ Requires:
                     $compile(menuDiv)(scope);
                 }
 
-                function configureDisabledWatch() {
-                    scope.$watch('disabled', function(newValue) {
-                        angular.element('div.wysiwyg-menu').find('button').each(function() {
+                function configureWatchers() {
+                    scope.$watch('disabled', function (newValue) {
+                        angular.element('div.wysiwyg-menu').find('button').each(function () {
                             angular.element(this).attr('disabled', newValue);
                         });
-                        angular.element('div.wysiwyg-menu').find('select').each(function() {
+                        angular.element('div.wysiwyg-menu').find('select').each(function () {
                             angular.element(this).attr('disabled', newValue);
                         });
                     });
+
+                    scope.$watch('fontColor', updateSelectedColorButton);
                 }
 
                 function configureBootstrapTitle() {
@@ -199,12 +352,12 @@ Requires:
                 function configureListeners() {
 
                     //Send message to calling controller that a button has been clicked.
-                    angular.element('.wysiwyg-menu').find('button').on('click', function() {
+                    angular.element('.wysiwyg-menu').find('button').on('click', function () {
                         var title = angular.element(this);
                         scope.$emit('wysiwyg.click', title.attr('title') || title.attr('data-original-title'));
                     });
 
-                    textarea.on('input keyup paste mouseup', function() {
+                    textarea.on('input keyup paste mouseup', function () {
                         var html = textarea.html();
 
                         if (html == '<br>') {
@@ -212,15 +365,15 @@ Requires:
                         }
 
                         ngModelController.$setViewValue(html);
-                    }); 
+                    });
 
-                    textarea.on('keydown', function(event){
-                        if (event.keyCode == 9){
+                    textarea.on('keydown', function (event) {
+                        if (event.keyCode == 9) {
                             var TAB_SPACES = 4;
                             var html = textarea.html();
                             var selection = window.getSelection();
                             var position = selection.anchorOffset;
-                    
+
                             event.preventDefault();
                             // html = insertTab(html, position);
                             // textarea.html(html);
@@ -228,8 +381,8 @@ Requires:
                         }
                     });
 
-                    textarea.on('click keyup focus mouseup', function() {
-                        $timeout(function() {
+                    textarea.on('click keyup focus mouseup', function () {
+                        $timeout(function () {
                             scope.isBold = scope.cmdState('bold');
                             scope.isUnderlined = scope.cmdState('underline');
                             scope.isStrikethrough = scope.cmdState('strikethrough');
@@ -245,21 +398,21 @@ Requires:
                             scope.isOrderedList = scope.cmdState('insertorderedlist');
                             scope.isUnorderedList = scope.cmdState('insertunorderedlist');
 
-                            scope.fonts.forEach(function(v, k) { //works but kinda crappy.
+                            scope.fonts.forEach(function (v, k) { //works but kinda crappy.
                                 if (scope.cmdValue('fontname').indexOf(v) > -1) {
                                     scope.font = v;
                                     return false;
                                 }
                             });
                             scope.cmdValue('formatblock').toLowerCase();
-                            scope.formatBlocks.forEach(function(v, k) {
+                            scope.formatBlocks.forEach(function (v, k) {
                                 if (scope.cmdValue('formatblock').toLowerCase() === v.value.toLowerCase()) {
                                     scope.formatBlock = v;
                                     return false;
                                 }
                             });
 
-                            scope.fontSizes.forEach(function(v, k) {
+                            scope.fontSizes.forEach(function (v, k) {
                                 if (scope.cmdValue('fontsize') === v.value) {
                                     scope.fontSize = v;
                                     return false;
@@ -270,7 +423,7 @@ Requires:
                             element.find('button.wysiwyg-hiliteColor').css('background-color', scope.hiliteColor);
 
                             scope.fontColor = scope.cmdValue('forecolor');
-                            element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
+                            updateSelectedColorButton();
 
                             scope.isLink = itemIs('A');
 
@@ -314,79 +467,101 @@ Requires:
                 }
 
                 // model -> view
-                ngModelController.$render = function() {
+                ngModelController.$render = function () {
                     textarea.html(ngModelController.$viewValue);
                 };
 
-                scope.format = function(cmd, arg) {
+                scope.format = function (cmd, arg) {
                     document.execCommand(cmd, false, arg);
                 };
 
-                scope.cmdState = function(cmd) {
+                scope.cmdState = function (cmd) {
                     return document.queryCommandState(cmd);
                 };
 
-                scope.cmdValue = function(cmd) {
+                scope.cmdValue = function (cmd) {
                     return document.queryCommandValue(cmd);
                 };
 
-                scope.createLink = function() {
+                scope.toggleHtml = function() {
+                    scope.htmlMode = !scope.htmlMode;
+                    if(scope.htmlMode){
+                        var rawValue = $('<div/>').html(textareaRaw.html()).text();
+                        textarea.html(rawValue);
+                        textarea.trigger("click");
+                        textarea.trigger("input");
+                    }
+                };
+
+                scope.createLink = function () {
                     var input = prompt('Enter the link URL');
                     if (input && input !== undefined)
                         scope.format('createlink', input);
                 };
 
-                scope.insertImage = function() {
-                    var input = prompt('Enter the image URL');
-                    if (input && input !== undefined)
-                        scope.format('insertimage', input);
+                // scope.insertImage = function () {
+                //     var input = prompt('Enter the image URL');
+                //     if (input && input !== undefined)
+                //         scope.format('insertimage', input);
+                // };
+
+                scope.insertImage = function () {
+                    var uploader = element.find('.wysiwyg-image-uploader');
+                    uploader.toggleClass('hidden');
                 };
 
-                scope.setFont = function() {
+                scope.setFont = function () {
                     scope.format('fontname', scope.font);
                 };
 
-                scope.setFontSize = function() {
+                scope.setFontSize = function () {
                     scope.format('fontsize', scope.fontSize.value);
                 };
 
-                scope.setFormatBlock = function() {
+                scope.setFormatBlock = function () {
                     scope.format('formatBlock', scope.formatBlock.value);
                 };
 
-                scope.setFontColor = function() {
+                scope.setFontColor = function () {
                     scope.format('forecolor', scope.fontColor);
                 };
 
-                scope.setHiliteColor = function() {
+                scope.setHiliteColor = function () {
                     scope.format('hiliteColor', scope.hiliteColor);
                 };
-
+                scope.textareaCustomFunctions = scope.textareaCustomFunctions || {};
+                for (var i in scope.textareaCustomFunctions) {
+                    if (scope[i] == null) {
+                        scope[i] = scope.textareaCustomFunctions[i];
+                    } else {
+                        console.log('Cannot set custom function `' + i + '`. Already exists function or property');
+                    }
+                }
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             }
-        })
-        .factory('wysiwgGui', function(wysiwgGuiElements) {
+        }])
+        .factory('wysiwgGui', [ 'wysiwgGuiElements', function (wysiwgGuiElements) {
 
             var ELEMENTS = wysiwgGuiElements;
             var custom = {};
 
-            var setCustomElements = function(el) {
+            var setCustomElements = function (el) {
                 custom = el;
             };
 
-            var getMenuGroup = function() {
+            var getMenuGroup = function () {
                 return {
                     tag: 'div',
                     classes: 'btn-group btn-group-sm wysiwyg-btn-group-margin',
                 };
             };
 
-            var getMenuItem = function(item) {
+            var getMenuItem = function (item) {
                 return ELEMENTS[item] || {};
             };
 
-            var createMenu = function(menu) {
+            var createMenu = function (menu) {
 
                 angular.extend(ELEMENTS, custom);
 
@@ -428,7 +603,7 @@ Requires:
                 } else if (obj.text) {
                     el = document.createElement('span');
                 } else {
-                    console.log('cannot create this element.');
+                    console.log('cannot create', obj, 'element.');
                     el = document.createElement('span');
                     return el;
                 }
@@ -470,7 +645,7 @@ Requires:
                 setCustomElements: setCustomElements
             };
 
-        })
+        }])
         .value('wysiwgGuiElements', {
             'bold': {
                 tag: 'button',
@@ -861,7 +1036,7 @@ Requires:
             },
             'hilite-color': {
                 tag: 'button',
-                classes: 'btn btn-default wysiwyg-colorpicker wysiwyg-fontcolor',
+                classes: 'btn btn-default wysiwyg-colorpicker wysiwyg-hilitecolor',
                 text: 'H',
                 attributes: [{
                     name: 'title',
@@ -974,6 +1149,28 @@ Requires:
                 data: [{
                     tag: 'i',
                     classes: 'fa fa-unlink'
+                }]
+            },
+            'toggle-mode': {
+                tag: 'button',
+                classes: 'btn btn-default',
+                attributes: [
+                    {
+                        name: 'title',
+                        value: 'Toggle HTML mode'
+                    },
+                    {
+                        name: 'ng-click',
+                        value: 'toggleHtml()'
+                    },
+                    {
+                        name: 'type',
+                        value: 'button'
+                    }
+                ],
+                data: [{
+                    tag: 'i',
+                    classes: 'fa fa-edit'
                 }]
             }
         });

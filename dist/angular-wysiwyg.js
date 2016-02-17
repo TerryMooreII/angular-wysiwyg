@@ -4,24 +4,24 @@ Usage: <wysiwyg textarea-id="question" textarea-class="form-control"  textarea-h
         textarea-id             The id to assign to the editable div
         textarea-class          The class(es) to assign to the the editable div
         textarea-height         If not specified in a text-area class then the hight of the editable div (default: 80px)
-        textarea-name           The name attribute of the editable div 
+        textarea-name           The name attribute of the editable div
         textarea-required       HTML/AngularJS required validation
         textarea-menu           Array of Arrays that contain the groups of buttons to show Defualt:Show all button groups
         ng-model                The angular data model
-        enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap  
+        enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap
 
-Requires: 
+Requires:
     Twitter-bootstrap, fontawesome, jquery, angularjs, bootstrap-color-picker (https://github.com/buberdds/angular-bootstrap-colorpicker)
 
 */
 /*
-    TODO: 
+    TODO:
         tab support
         custom button fuctions
 
         limit use of scope
         use compile fuction instead of $compile
-        move button elements to js objects and use doc fragments 
+        move button elements to js objects and use doc fragments
 */
 (function (angular, undefined) {
   'use strict';
@@ -67,9 +67,10 @@ Requires:
     '$timeout',
     'wysiwgGui',
     '$compile',
-    function ($timeout, wysiwgGui, $compile) {
+    '$window',
+    function ($timeout, wysiwgGui, $compile, $window) {
       return {
-        template: '<div>' + '<style>' + '   .wysiwyg-textarea[contentEditable="false"] { background-color:#eee}' + '   .wysiwyg-btn-group-margin { margin-right:5px; }' + '   .wysiwyg-select { height:30px;margin-bottom:1px;}' + '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' + '</style>' + '<div class="wysiwyg-menu"></div>' + '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" name="{{textareaName}}" ng-model="value"></div>' + '</div>',
+        template: '<div>' + '<style>' + '   .wysiwyg-textarea[contentEditable="false"] { background-color:#eee}' + '   .wysiwyg-btn-group-margin { margin-right:5px; }' + '   .wysiwyg-select { height:30px;margin-bottom:1px;}' + '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' + '</style>' + '<div class="wysiwyg-menu"></div>' + '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' + '</div>',
         restrict: 'E',
         scope: {
           value: '=ngModel',
@@ -81,7 +82,8 @@ Requires:
           textareaMenu: '=textareaMenu',
           textareaCustomMenu: '=textareaCustomMenu',
           fn: '&',
-          disabled: '=?disabledArea'
+          disabled: '=?disabled',
+          textareaCustomFunctions: '=textareaCustomFunctions'
         },
         replace: true,
         require: 'ngModel',
@@ -153,10 +155,6 @@ Requires:
         ];
         scope.formatBlock = scope.formatBlocks[0];
         scope.fontSize = scope.fontSizes[1];
-        if (angular.isArray(scope.cssClasses)) {
-          scope.cssClasses.unshift('css');
-          scope.cssClass = scope.cssClasses[0];
-        }
         scope.fonts = [
           'Georgia',
           'Palatino Linotype',
@@ -177,10 +175,41 @@ Requires:
         scope.font = scope.fonts[6];
         init();
         function init() {
+          applyDefaultsFromStyle();
           compileMenu();
-          configureDisabledWatch();
+          configureWatchers();
           configureBootstrapTitle();
           configureListeners();
+        }
+        function updateSelectedColorButton() {
+          element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
+        }
+        function applyDefaultsFromStyle() {
+          $timeout(function () {
+            var textArea = element.find('.wysiwyg-textarea')[0];
+            var styles = $window.getComputedStyle(textArea, null);
+            if (styles.fontFamily != null) {
+              var fontName = styles.fontFamily.split(',')[0];
+              //Remove "'" symbols from style name
+              fontName = fontName.slice(1, -1);
+              if (scope.fonts.indexOf(fontName) !== -1) {
+                scope.font = fontName;
+              }
+            }
+            if (styles.fontSize != null) {
+              for (var i = 0; i < scope.fontSizes.length; i++) {
+                var fontSizeDescriptor = scope.fontSizes[i];
+                if (fontSizeDescriptor.size == styles.fontSize) {
+                  scope.fontSize = fontSizeDescriptor;
+                  break;
+                }
+              }
+            }
+            if (styles.color != null) {
+              scope.fontColor = styles.color;
+              updateSelectedColorButton();
+            }
+          });
         }
         function compileMenu() {
           wysiwgGui.setCustomElements(scope.textareaCustomMenu);
@@ -188,7 +217,7 @@ Requires:
           menuDiv.appendChild(wysiwgGui.createMenu(scope.textareaMenu));
           $compile(menuDiv)(scope);
         }
-        function configureDisabledWatch() {
+        function configureWatchers() {
           scope.$watch('disabled', function (newValue) {
             angular.element('div.wysiwyg-menu').find('button').each(function () {
               angular.element(this).attr('disabled', newValue);
@@ -197,6 +226,7 @@ Requires:
               angular.element(this).attr('disabled', newValue);
             });
           });
+          scope.$watch('fontColor', updateSelectedColorButton);
         }
         function configureBootstrapTitle() {
           if (attrs.enableBootstrapTitle === 'true' && attrs.enableBootstrapTitle !== undefined) {
@@ -272,7 +302,7 @@ Requires:
               scope.hiliteColor = getHiliteColor();
               element.find('button.wysiwyg-hiliteColor').css('background-color', scope.hiliteColor);
               scope.fontColor = scope.cmdValue('forecolor');
-              element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
+              updateSelectedColorButton();
               scope.isLink = itemIs('A');
             }, 0);
           });
@@ -346,100 +376,101 @@ Requires:
         scope.setHiliteColor = function () {
           scope.format('hiliteColor', scope.hiliteColor);
         };
+        scope.textareaCustomFunctions = scope.textareaCustomFunctions || {};
+        for (var i in scope.textareaCustomFunctions) {
+          if (scope[i] == null) {
+            scope[i] = scope.textareaCustomFunctions[i];
+          } else {
+            console.log('Cannot set custom function `' + i + '`. Already exists function or property');
+          }
+        }
         scope.format('enableobjectresizing', true);
         scope.format('styleWithCSS', true);
       }
     }
-  ]).factory('wysiwgGui', [
-    'wysiwgGuiElements',
-    function (wysiwgGuiElements) {
-      var ELEMENTS = wysiwgGuiElements;
-      var custom = {};
-      var setCustomElements = function (el) {
-        custom = el;
+  ]).factory('wysiwgGui', function (wysiwgGuiElements) {
+    var ELEMENTS = wysiwgGuiElements;
+    var custom = {};
+    var setCustomElements = function (el) {
+      custom = el;
+    };
+    var getMenuGroup = function () {
+      return {
+        tag: 'div',
+        classes: 'btn-group btn-group-sm wysiwyg-btn-group-margin'
       };
-      var getMenuGroup = function () {
-        return {
-          tag: 'div',
-          classes: 'btn-group btn-group-sm wysiwyg-btn-group-margin'
-        };
-      };
-      var getMenuItem = function (item) {
-        return ELEMENTS[item] || {};
-      };
-      var createMenu = function (menu) {
-        angular.extend(ELEMENTS, custom);
-        //Get the default menu or the passed in menu
-        if (angular.isDefined(menu) && menu !== '') {
-          menu = menu;  //stringToArray(menu)
-        } else {
-          menu = DEFAULT_MENU;
-        }
-        //create div to add everything to.
-        var startDiv = document.createElement('div');
-        var el;
-        for (var i = 0; i < menu.length; i++) {
-          var menuGroup = create(getMenuGroup());
-          for (var j = 0; j < menu[i].length; j++) {
-            //link has two functions link and unlink
-            if (menu[i][j] === 'link') {
-              el = create(getMenuItem('unlink'));
-              menuGroup.appendChild(el);
-            }
-            el = create(getMenuItem(menu[i][j]));
+    };
+    var getMenuItem = function (item) {
+      return ELEMENTS[item] || {};
+    };
+    var createMenu = function (menu) {
+      angular.extend(ELEMENTS, custom);
+      //Get the default menu or the passed in menu
+      if (angular.isDefined(menu) && menu !== '') {
+        menu = menu;  //stringToArray(menu)
+      } else {
+        menu = DEFAULT_MENU;
+      }
+      //create div to add everything to.
+      var startDiv = document.createElement('div');
+      var el;
+      for (var i = 0; i < menu.length; i++) {
+        var menuGroup = create(getMenuGroup());
+        for (var j = 0; j < menu[i].length; j++) {
+          //link has two functions link and unlink
+          if (menu[i][j] === 'link') {
+            el = create(getMenuItem('unlink'));
             menuGroup.appendChild(el);
           }
-          startDiv.appendChild(menuGroup);
+          el = create(getMenuItem(menu[i][j]));
+          menuGroup.appendChild(el);
         }
-        return startDiv;
-      };
-      function create(obj) {
-        var el;
-        if (obj.tag) {
-          el = document.createElement(obj.tag);
-        } else if (obj.text) {
-          el = document.createElement('span');
-        } else {
-          console.log('cannot create this element.');
-          el = document.createElement('span');
-          return el;
-        }
-        if (obj.text && document.all) {
-          el.innerText = obj.text;
-        } else {
-          if(obj.text){
-                el.textContent = obj.text;
-            }else{
-                el.textContent = "";
-            }
-        }
-        if (obj.classes) {
-          el.className = obj.classes;
-        }
-        if (obj.html) {
-          el.innerHTML = obj.html;
-        }
-        if (obj.attributes && obj.attributes.length) {
-          for (var i in obj.attributes) {
-            var attr = obj.attributes[i];
-            if (attr.name && attr.value) {
-              el.setAttribute(attr.name, attr.value);
-            }
-          }
-        }
-        if (obj.data && obj.data.length) {
-          for (var item in obj.data) {
-            el.appendChild(create(obj.data[item]));
-          }
-        }
+        startDiv.appendChild(menuGroup);
+      }
+      return startDiv;
+    };
+    function create(obj) {
+      var el;
+      if (obj.tag) {
+        el = document.createElement(obj.tag);
+      } else if (obj.text) {
+        el = document.createElement('span');
+      } else {
+        console.log('cannot create', obj, 'element.');
+        el = document.createElement('span');
         return el;
       }
-      return {
-        createMenu: createMenu,
-        setCustomElements: setCustomElements
-      };
+      if (obj.text && document.all) {
+        el.innerText = obj.text;
+      } else if (obj.text) {
+        el.textContent = obj.text;
+      }
+      if (obj.classes) {
+        el.className = obj.classes;
+      }
+      if (obj.html) {
+        el.innerHTML = obj.html;
+      }
+      if (obj.attributes && obj.attributes.length) {
+        for (var i in obj.attributes) {
+          var attr = obj.attributes[i];
+          if (attr.name && attr.value) {
+            el.setAttribute(attr.name, attr.value);
+          }
+        }
+      }
+      if (obj.data && obj.data.length) {
+        for (var item in obj.data) {
+          el.appendChild(create(obj.data[item]));
+        }
+      }
+      return el;
     }
-  ]).value('wysiwgGuiElements', {
+    return {
+      createMenu: createMenu,
+      setCustomElements: setCustomElements
+    };
+  }).value('wysiwgGuiElements', {
     'bold': {
       tag: 'button',
       classes: 'btn btn-default',
@@ -922,7 +953,7 @@ Requires:
     },
     'hilite-color': {
       tag: 'button',
-      classes: 'btn btn-default wysiwyg-colorpicker wysiwyg-fontcolor',
+      classes: 'btn btn-default wysiwyg-colorpicker wysiwyg-hilitecolor',
       text: 'H',
       attributes: [
         {
@@ -957,7 +988,7 @@ Requires:
       attributes: [
         {
           name: 'title',
-          value: 'Font'
+          value: 'Image'
         },
         {
           name: 'ng-model',
