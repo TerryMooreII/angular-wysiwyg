@@ -65,6 +65,7 @@ Requires:
                     textareaId: '@textareaId',
                     textareaMenu: '=textareaMenu',
                     textareaCustomMenu: '=textareaCustomMenu',
+                    defaultFontSize: '@defaultFontSize',
                     fn: '&',
                     disabled: '=?disabled',
                 },
@@ -127,7 +128,12 @@ Requires:
                 }, ];
                 scope.formatBlock = scope.formatBlocks[0];
 
-                scope.fontSize = scope.fontSizes[1];
+                var defaultFontSizeIndex = ['10','13','16','18','24','32','48'].indexOf(scope.defaultFontSize);
+                if(defaultFontSizeIndex > -1){
+                    scope.fontSize = scope.fontSizes[defaultFontSizeIndex];
+                } else {
+                    scope.fontSize = scope.fontSizes[1];
+                }
 
                 if (angular.isArray(scope.cssClasses)) {
                     scope.cssClasses.unshift('css');
