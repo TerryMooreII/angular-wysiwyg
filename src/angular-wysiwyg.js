@@ -7,6 +7,7 @@ Usage: <wysiwyg textarea-id="question" textarea-class="form-control"  textarea-h
         textarea-name           The name attribute of the editable div 
         textarea-required       HTML/AngularJS required validation
         textarea-menu           Array of Arrays that contain the groups of buttons to show Defualt:Show all button groups
+        textarea-tabindex       Fills in the HTML tag tabindex
         ng-model                The angular data model
         enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap  
 
@@ -53,7 +54,7 @@ Requires:
                     '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
                     '</style>' +
                     '<div class="wysiwyg-menu"></div>' +
-                    '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
+                    '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" tabindex="{{textareaTabindex}}" ng-model="value"></div>' +
                     '</div>',
                 restrict: 'E',
                 scope: {
@@ -65,6 +66,8 @@ Requires:
                     textareaId: '@textareaId',
                     textareaMenu: '=textareaMenu',
                     textareaCustomMenu: '=textareaCustomMenu',
+                    textareaTabindex: '@textareaTabindex',
+                    enableTabThrough: '@enableTabThrough',
                     fn: '&',
                     disabled: '=?disabled',
                 },
@@ -79,7 +82,8 @@ Requires:
                 var textarea = element.find('div.wysiwyg-textarea');
 
                 scope.isLink = false;
-
+                scope.enableTabThrough = scope.enableTabThrough || false;
+                
                 scope.fontSizes = [{
                     value: '1',
                     size: '10px'
@@ -215,7 +219,7 @@ Requires:
                     }); 
 
                     textarea.on('keydown', function(event){
-                        if (event.keyCode == 9){
+                        if (event.keyCode == 9 && !scope.enableTabThrough){
                             var TAB_SPACES = 4;
                             var html = textarea.html();
                             var selection = window.getSelection();
