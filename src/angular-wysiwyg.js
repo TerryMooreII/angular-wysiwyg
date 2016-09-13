@@ -10,6 +10,7 @@ Usage: <wysiwyg textarea-id="question" textarea-class="form-control"  textarea-h
         textarea-tabindex       Fills in the HTML tag tabindex
         ng-model                The angular data model
         enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap  
+        enable-tab-through      When pressing tab in textarea the next element will be selected. Default:false
 
 Requires: 
     Twitter-bootstrap, fontawesome, jquery, angularjs, bootstrap-color-picker (https://github.com/buberdds/angular-bootstrap-colorpicker)
