@@ -60,6 +60,8 @@ Option|Description
 **enable-bootstrap-title**|		True/False whether or not to show the button hover title styled with bootstrap	
 **textarea-menu**    |          Cusomize the wysiwyg buttons and button groups ***See Below** If nothing is specified then the default buttons and groups will be shown.
 **disabled**  |          Disable the buttons and wysiwig area 
+**style-with-css**  |    true/false flag to set style with css or not, default is true if not set  
+**enable-obj-resizing**  |          true/false flag to set enable obj resizing or not, default is true if not set
 
 Buttons
 --------------
