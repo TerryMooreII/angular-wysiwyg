@@ -29,14 +29,14 @@ Installation
 `bower install angular-wysiwyg`
 
 
-Required dependancies
+Required dependencies
 -----------------------
 * [AngularJS] (http://www.angularjs.com) 
 * [Font Awesome] (http://fortawesome.github.io/Font-Awesome/)
 * [Twitter Bootstrap] (http://getbootstrap.com/2.3.2/)
 * [bootstrap-color-picker] (https://github.com/buberdds/angular-bootstrap-colorpicker)
 
-Install each dependancy to your AngularJS project.
+Install each dependency to your AngularJS project.
 
 Add `'wysiwyg.module'` to your main angular.module like so
 ```javascript
@@ -61,6 +61,7 @@ Option|Description
 **textarea-name**	 |			The name attribute of the editable div 
 **textarea-required**|			True/False HTML/AngularJS required validation
 **enable-bootstrap-title**|		True/False whether or not to show the button hover title styled with bootstrap	
+**default-font-size**  |  The font size that is selected by default by the font-size menu option. Can be given a value of '10', '13', '16', '18', '24', '32', or '48'.
 **textarea-menu**    |          Cusomize the wysiwyg buttons and button groups ***See Below** If nothing is specified then the default buttons and groups will be shown.
 **disabled**  |          Disable the buttons and wysiwig area 
 
