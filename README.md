@@ -1,4 +1,7 @@
 
+I have not had time to update this project in a long time which has caused me to fall behind on many bugs listed in the issues page. If you still depend on this project and would like to contribute please let me know or submit pull requests. 
+==================
+
 Angular WYSIWYG directive.
 ===========================
 
