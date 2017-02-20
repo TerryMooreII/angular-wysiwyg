@@ -39,7 +39,7 @@ Requires:
         ['ordered-list', 'unordered-list', 'outdent', 'indent'],
         ['left-justify', 'center-justify', 'right-justify'],
         ['code', 'quote', 'paragraph'],
-        ['link', 'image']
+        ['link', 'image', 'embed-image']
     ];
 
     angular.module('wysiwyg.module', ['colorpicker.module'])
@@ -51,7 +51,8 @@ Requires:
                     '   .wysiwyg-btn-group-margin { margin-right:5px; }' +
                     '   .wysiwyg-select { height:30px;margin-bottom:1px;}' +
                     '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
-                    '</style>' +
+                    '   #wysiwyg-upload { display: none; }' +
+                    '</style><input id="wysiwyg-upload" type="file" accept="image/*"/>' +
                     '<div class="wysiwyg-menu"></div>' +
                     '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
                     '</div>',
@@ -77,6 +78,16 @@ Requires:
             function link(scope, element, attrs, ngModelController) {
 
                 var textarea = element.find('div.wysiwyg-textarea');
+
+                element.find('#wysiwyg-upload')[0].onchange = function(e) {
+                  if (e.target.files.length > 0) {
+                    var fileInfo = e.target.files[0];
+                    if (/^image\//.test(fileInfo.type)) {
+                      scope.insertFile(fileInfo);
+                      e.target.value = '';
+                    }
+                  }
+                };
 
                 scope.isLink = false;
 
@@ -340,6 +351,14 @@ Requires:
                     var input = prompt('Enter the image URL');
                     if (input && input !== undefined)
                         scope.format('insertimage', input);
+                };
+
+                scope.insertFile = function(fileInfo) {
+                    var fReader = new FileReader();
+                    fReader.onload = function(e) {
+                        scope.format('insertimage', e.target.result);
+                    };
+                    fReader.readAsDataURL( fileInfo );
                 };
 
                 scope.setFont = function() {
@@ -815,6 +834,21 @@ Requires:
                 }, {
                     name: 'type',
                     value: 'button'
+                }]
+            },
+            'embed-image': {
+                tag: 'label',
+                classes: 'btn btn-default',
+                attributes: [{
+                    name: 'title',
+                    value: 'Embed Image'
+                }, {
+                    name: 'for',
+                    value: 'wysiwyg-upload'
+                }],
+                data: [{
+                    tag: 'i',
+                    classes: 'fa fa-file-image-o'
                 }]
             },
             'image': {
