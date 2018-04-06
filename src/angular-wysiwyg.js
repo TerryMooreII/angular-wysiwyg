@@ -278,9 +278,14 @@ Requires:
                     });
                 }
 
+                function getSelection() {
+                    var selection = window.getSelection();
+                    return selection.rangeCount ? selection.getRangeAt(0) : null;
+                }
+
                 //Used to detect things like A tags and others that dont work with cmdValue().
                 function itemIs(tag) {
-                    var selection = window.getSelection().getRangeAt(0);
+                    var selection = getSelection();
                     if (selection) {
                         if (selection.startContainer.parentNode.tagName === tag.toUpperCase() || selection.endContainer.parentNode.tagName === tag.toUpperCase()) {
                             return true;
@@ -294,7 +299,7 @@ Requires:
 
                 //Used to detect things like A tags and others that dont work with cmdValue().
                 function getHiliteColor() {
-                    var selection = window.getSelection().getRangeAt(0);
+                    var selection = getSelection();
                     if (selection) {
                         var style = angular.element(selection.startContainer.parentNode).attr('style');
 
