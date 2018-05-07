@@ -173,10 +173,10 @@ Requires:
 
                 function configureDisabledWatch() {
                     scope.$watch('disabled', function(newValue) {
-                        angular.element('div.wysiwyg-menu').find('button').each(function() {
+                        element.children('div.wysiwyg-menu').find('button').each(function() {
                             angular.element(this).attr('disabled', newValue);
                         });
-                        angular.element('div.wysiwyg-menu').find('select').each(function() {
+                        element.children('div.wysiwyg-menu').find('select').each(function() {
                             angular.element(this).attr('disabled', newValue);
                         });
                     });
