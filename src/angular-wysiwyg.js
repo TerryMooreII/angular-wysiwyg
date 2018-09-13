@@ -4,25 +4,25 @@ Usage: <wysiwyg textarea-id="question" textarea-class="form-control"  textarea-h
         textarea-id             The id to assign to the editable div
         textarea-class          The class(es) to assign to the the editable div
         textarea-height         If not specified in a text-area class then the hight of the editable div (default: 80px)
-        textarea-name           The name attribute of the editable div 
+        textarea-name           The name attribute of the editable div
         textarea-required       HTML/AngularJS required validation
         textarea-menu           Array of Arrays that contain the groups of buttons to show Defualt:Show all button groups
         ng-model                The angular data model
-        enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap  
+        enable-bootstrap-title  True/False whether or not to show the button hover title styled with bootstrap
 
-Requires: 
+Requires:
     Twitter-bootstrap, fontawesome, jquery, angularjs, bootstrap-color-picker (https://github.com/buberdds/angular-bootstrap-colorpicker)
 
 */
 
 /*
-    TODO: 
+    TODO:
         tab support
         custom button fuctions
 
         limit use of scope
         use compile fuction instead of $compile
-        move button elements to js objects and use doc fragments 
+        move button elements to js objects and use doc fragments
 */
 
 (function(angular, undefined) {
@@ -212,7 +212,7 @@ Requires:
                         }
 
                         ngModelController.$setViewValue(html);
-                    }); 
+                    });
 
                     textarea.on('keydown', function(event){
                         if (event.keyCode == 9){
@@ -220,11 +220,11 @@ Requires:
                             var html = textarea.html();
                             var selection = window.getSelection();
                             var position = selection.anchorOffset;
-                    
+
                             event.preventDefault();
                             // html = insertTab(html, position);
                             // textarea.html(html);
-                            // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);    
+                            // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);
                         }
                     });
 
@@ -235,7 +235,7 @@ Requires:
                             scope.isStrikethrough = scope.cmdState('strikethrough');
                             scope.isItalic = scope.cmdState('italic');
                             scope.isSuperscript = itemIs('SUP'); //scope.cmdState('superscript');
-                            scope.isSubscript = itemIs('SUB'); //scope.cmdState('subscript');    
+                            scope.isSubscript = itemIs('SUB'); //scope.cmdState('subscript');
                             scope.isRightJustified = scope.cmdState('justifyright');
                             scope.isLeftJustified = scope.cmdState('justifyleft');
                             scope.isCenterJustified = scope.cmdState('justifycenter');
@@ -435,7 +435,7 @@ Requires:
 
                 if (obj.text && document.all) {
                     el.innerText = obj.text;
-                } else {
+                } else if (obj.text) {
                     el.textContent = obj.text;
                 }
 
@@ -474,7 +474,7 @@ Requires:
         .value('wysiwgGuiElements', {
             'bold': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Bold'
@@ -495,7 +495,7 @@ Requires:
             },
             'italic': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Italic'
@@ -516,7 +516,7 @@ Requires:
             },
             'underline': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Underline'
@@ -537,7 +537,7 @@ Requires:
             },
             'strikethrough': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Strikethrough'
@@ -558,7 +558,7 @@ Requires:
             },
             'subscript': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Subscript'
@@ -579,7 +579,7 @@ Requires:
             },
             'superscript': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Superscript'
@@ -600,7 +600,7 @@ Requires:
             },
             'remove-format': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Remove Formatting'
@@ -618,7 +618,7 @@ Requires:
             },
             'ordered-list': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Ordered List'
@@ -639,7 +639,7 @@ Requires:
             },
             'unordered-list': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Unordered List'
@@ -660,7 +660,7 @@ Requires:
             },
             'outdent': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Outdent'
@@ -678,7 +678,7 @@ Requires:
             },
             'indent': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Indent'
@@ -696,7 +696,7 @@ Requires:
             },
             'left-justify': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Left Justify'
@@ -717,7 +717,7 @@ Requires:
             },
             'center-justify': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Center Justify'
@@ -738,7 +738,7 @@ Requires:
             },
             'right-justify': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Right Justify'
@@ -759,7 +759,7 @@ Requires:
             },
             'code': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Code'
@@ -780,7 +780,7 @@ Requires:
             },
             'quote': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Quote'
@@ -801,7 +801,7 @@ Requires:
             },
             'paragraph': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 text: 'P',
                 attributes: [{
                     name: 'title',
@@ -819,7 +819,7 @@ Requires:
             },
             'image': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Image'
@@ -832,12 +832,12 @@ Requires:
                 }],
                 data: [{
                     tag: 'i',
-                    classes: 'fa fa-picture-o'
+                    classes: 'fa fa-image'
                 }]
             },
             'font-color': {
                 tag: 'button',
-                classes: 'btn btn-default wysiwyg-colorpicker wysiwyg-fontcolor',
+                classes: 'btn btn-default border wysiwyg-colorpicker wysiwyg-fontcolor',
                 text: 'A',
                 attributes: [{
                     name: 'title',
@@ -861,7 +861,7 @@ Requires:
             },
             'hilite-color': {
                 tag: 'button',
-                classes: 'btn btn-default wysiwyg-colorpicker wysiwyg-fontcolor',
+                classes: 'btn btn-default border wysiwyg-colorpicker wysiwyg-fontcolor',
                 text: 'H',
                 attributes: [{
                     name: 'title',
@@ -936,7 +936,7 @@ Requires:
             },
             'link': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Link'
@@ -946,18 +946,18 @@ Requires:
                 }, {
                     name: 'ng-show',
                     value: '!isLink'
+                }, {
+                    name: 'type',
+                    value: 'button'
                 }],
                 data: [{
                     tag: 'i',
                     classes: 'fa fa-link'
-                }, {
-                    name: 'type',
-                    value: 'button'
                 }]
             },
             'unlink': {
                 tag: 'button',
-                classes: 'btn btn-default',
+                classes: 'btn btn-default border',
                 attributes: [{
                     name: 'title',
                     value: 'Unlink'
