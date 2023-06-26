@@ -8,24 +8,6 @@ Angular WYSIWYG directive.
 
 Pull Requests Welcome
 -------------------------
-
-
-Demo
-----
-
-```
-$ git clone https://github.com/TerryMooreII/angular-wysiwyg.git
-$ npm install 
-$ gulp server
-```
-Open browser to http://localhost:4000/demo
-
-
-Installation
-------------
-`bower install angular-wysiwyg`
-
-
 Required dependancies
 -----------------------
 * [AngularJS] (http://www.angularjs.com) 

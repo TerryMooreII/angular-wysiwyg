@@ -1,33 +1,27 @@
 {
   "name": "angular-wysiwyg",
-  "version": "1.2.5-dev",
+  "version": "1.2.6-dev",
   "description": "AngularJS WYSIWYG editor",
-  "main": "./dist/angular-azure-wysiwyg.min.js",
+  "main": "./dist/angular-wysiwyg.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx webpack-cli"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/TerryMooreII/angular-wysiwyg.git"
+    "url": "https://github.com/RightSourceCompliance/angular-wysiwyg.git"
   },
   "keywords": [
     "angularjs",
     "wysiwyg"
   ],
-  "author": "Terry Moore II",
-  "license": "BSD",
+  "author": "RightSourceCompliance",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/TerryMooreII/angular-wysiwyg/issues"
+    "url": "https://github.com/RightSourceCompliance/angular-wysiwyg/issues"
   },
   "devDependencies": {
-    "gulp": "~3.8.11",
-    "gulp-rename": "~1.2.0",
-    "gulp-concat": "~2.4.3",
-    "gulp-uglify": "~1.1.0",
-    "gulp-jshint": "~1.9.2",
-    "gulp-ngmin": "~0.3.0",
-    "express": "~4.11.2",
-    "connect-livereload": "~0.5.2",
-    "tiny-lr": "~0.1.5"
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4"
   }
 }

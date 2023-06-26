@@ -43,7 +43,7 @@ Requires:
     ];
 
     angular.module('wysiwyg.module', ['colorpicker.module'])
-        .directive('wysiwyg', function($timeout, wysiwgGui, $compile) {
+        .directive('wysiwyg', ["$timeout", "wysiwgGui", "$compile", function($timeout, wysiwgGui, $compile) {
             return {
                 template: '<div>' +
                     '<style>' +
@@ -365,8 +365,8 @@ Requires:
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             }
-        })
-        .factory('wysiwgGui', function(wysiwgGuiElements) {
+        }])
+        .factory('wysiwgGui', ["wysiwgGuiElements", function(wysiwgGuiElements) {
 
             var ELEMENTS = wysiwgGuiElements;
             var custom = {};
@@ -470,7 +470,7 @@ Requires:
                 setCustomElements: setCustomElements
             };
 
-        })
+        }])
         .value('wysiwgGuiElements', {
             'bold': {
                 tag: 'button',
